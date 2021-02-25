@@ -53,7 +53,7 @@ export class SigninScreen extends Component {
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="เข้าสู่ระบบ" backHandler={this.onBackHandler}></HeaderAy>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={[mainStyle.background, { height: '100%' }]}>
                     <View style={mainStyle.content}>
 
                         <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>สมัครสมาชิก</Text>

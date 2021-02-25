@@ -7,12 +7,12 @@ const Loading = ({ visible }) => {
         <Spinner
             visible={visible}
             animation={'fade'}
-            color={Theme.Main_loading}
+            color={Theme.Color_green}
             overlayColor={'rgba(255, 255, 255, 0.5)'}
             cancelable={false}
             textContent={'loading'}
             textStyle={{
-                color: Theme.Main_loading,
+                color: Theme.Color_green,
                 fontFamily: 'SukhumvitSet-SemiBold',
                 fontSize: 32, fontWeight: 'normal'
             }} />

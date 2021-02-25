@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "758905621786",
+    "project_id": "activeyouth-73fad",
+    "storage_bucket": "activeyouth-73fad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758905621786:android:73f6c9cb6a55a859e0f0a3",
+        "android_client_info": {
+          "package_name": "com.activeyouth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758905621786-ck00q42bvgt8da5ev191sp0a2v20r216.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7Q-NL_gJRVbKh7G_KDfZDvlXizxLk2Ac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "758905621786-ck00q42bvgt8da5ev191sp0a2v20r216.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

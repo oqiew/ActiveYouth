@@ -14,7 +14,14 @@ export class ForgotPasswordScreen extends Component {
         }
     }
     onResetPassword() {
-
+        e.preventDefault();
+        auth().sendPasswordResetEmail(this.state.Email)
+            .then((doc) => {
+                Alert.alert("กรุณาเช็คอีเมลของท่าน");
+            })
+            .catch(error => {
+                Alert.alert("ตั้งรหัสผ่านใหม่ไม่สำเร็จ กรุณากรอกข้อมูลอีเมลให้ถูกต้อง");
+            });
     }
     onBackHandler = () => {
         this.setState({
@@ -28,11 +35,11 @@ export class ForgotPasswordScreen extends Component {
         return (
             <Container>
                 <Loading visible={loading}></Loading>
-                <HeaderAy name="สมัครสมาชิก" backHandler={this.onBackHandler}></HeaderAy>
+                <HeaderAy name="ลืมรหัสผ่าน" backHandler={this.onBackHandler}></HeaderAy>
                 <Content contentContainerStyle={{ padding: 15 }}>
                     <View style={mainStyle.content}>
 
-                        <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>สมัครสมาชิก</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>กรอก Email ที่ท่านสมัครไว้</Text>
                         <Item floatingLabel style={{ marginTop: 10 }}>
                             <Icon active name='mail' type="AntDesign"></Icon>
                             <Label>email</Label>

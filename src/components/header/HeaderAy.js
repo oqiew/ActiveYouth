@@ -1,10 +1,11 @@
 import React from "react";
 import { Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
+import themeStyle from "../../styles/theme.style";
 
 const HeaderAy = ({ name, backHandler, menu }, props) => {
 
     return (
-        <Header>
+        <Header style={{ backgroundColor: themeStyle.Color_green }}>
             <Left >
                 {backHandler !== null && <Button transparent onPress={backHandler}>
                     <Icon name='arrow-back' />

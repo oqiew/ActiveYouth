@@ -6,78 +6,154 @@ import { connect } from 'react-redux';
 import { addProfile } from '../redux/Reducer';
 import Loading from '../components/Loading';
 
-import upload from '../assets/upload.png'
+import logo from '../assets/logo.png'
 import mainStyle from '../styles/main.style';
 import { routeName } from '../route/routeName';
-
+import Auth from '@react-native-firebase/auth';
+import Firestore from '@react-native-firebase/firestore'
+import { isEmptyValues } from '../components/Method';
+import { TableName } from '../database/TableName';
 export class WelcomeScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
             laoding: false,
-            page_status: 'start',
             Email: '',
             Password: '',
             confirm_password: '',
+            ...this.props.userReducer.profile
+        }
+        this.tbUser = Firestore().collection(TableName.Users);
+
+    }
+    componentDidMount() {
+        this.setState({
+            loading: true
+        })
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            Auth().onAuthStateChanged((user) => {
+                if (user) {
+                    this.tbUser.doc(user.uid).get().then((doc) => {
+
+                        if (doc.exists) {
+                            this.props.addProfile({ uid: user.uid, email: user.email, ...doc.data() })
+                            this.setState({
+                                loading: false
+                            })
+                            console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
+                            this.props.navigation.navigate(routeName.Home)
+                        } else {
+                            this.props.addProfile({ uid: user.uid, email: user.email })
+                            this.setState({
+                                loading: false
+                            })
+                            console.log('home set user no profile', user.uid, user.email)
+                            this.props.navigation.navigate(routeName.ProfileEdit)
+                        }
+
+                    }).catch((error) => {
+                        this.props.addProfile({ uid: user.uid, email: user.email })
+                        this.setState({
+                            loading: false
+                        })
+                        console.log('error home set user no profile', user.uid, user.email)
+                        this.props.navigation.navigate(routeName.ProfileEdit)
+                    })
+                } else {
+                    this.setState({
+                        loading: false
+                    })
+                    console.log('You are not logged in.')
+
+                }
+            })
+        });
+
+    }
+    componentWillUnmount() {
+        this._unsubscribe = null;
+    }
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            ...this.props.userReducer.profile
+        })
+    }
+    goToGuest() {
+        this.props.navigation.navigate(routeName.GuestHome)
+    }
+    goToSignin() {
+        if (isEmptyValues[this.state.uid]) {
+            this.props.navigation.navigate(routeName.Signin)
+        } else {
+            this.props.navigation.navigate(routeName.Home)
         }
     }
-    goToScreen(name) {
-        this.props.navigation.navigate(name)
+    goToRegister() {
+        this.props.navigation.navigate(routeName.Signup)
+    }
+    goToForgotPassword() {
+        this.props.navigation.navigate(routeName.ForgotPassword)
     }
     render() {
-        const { laoding, page_status } = this.state;
+        const { laoding } = this.state;
         return (
             <Container>
                 <Loading visible={laoding}></Loading>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>
                     <View style={mainStyle.content}>
                         <Image
-                            source={upload}
-                            style={{ width: 130, height: 130 }}
+                            source={logo}
+                            style={{ width: 150, height: 150 }}
                         />
                         <Text style={{ fontSize: 32, textAlign: 'center' }}>
                             Active Youth</Text>
                         <Text style={{ fontSize: 32, textAlign: 'center' }}>
                             รายละเอียดโครงการ</Text>
-                        {page_status === 'start' &&
-                            // แสดงหน้าแรก
-                            <View style={{
-                                alignItems: 'center'
-                            }}>
-                                <View style={{ margin: 10, }}>
-                                    <Button
-                                        success
-                                        onPress={this.goToScreen.bind(this, routeName.Home)}
-                                    >
-                                        {/* <Icon name="colsecircleo" type="AntDesign" /> */}
-                                        <Text style={{ color: '#ffffff', fontSize: 24 }}>ผู้เยี่ยมชม</Text>
-                                    </Button>
-                                </View>
-                                <View style={{ margin: 10, }}>
-                                    <Button
-                                        success
-                                        onPress={this.goToScreen.bind(this, routeName.Signin)}
-                                    >
-                                        {/* <Icon name="colsecircleo" type="AntDesign" /> */}
-                                        <Text style={{ fontSize: 24 }}>เข้าสู่ระบบ</Text>
-                                    </Button>
-                                </View>
-                                <View style={{ margin: 10, }}>
-                                    <Button
-                                        success
-                                        onPress={this.goToScreen.bind(this, routeName.Signup)}
-                                    >
-                                        {/* <Icon name="colsecircleo" type="AntDesign" /> */}
-                                        <Text style={{ fontSize: 24 }}>สมัครสมาชิก</Text>
-                                    </Button>
-                                </View>
+
+                        {/* แสดงหน้าแรก */}
+                        <View style={{
+                            alignItems: 'center'
+                        }}>
+                            {isEmptyValues[this.state.uid] && <View style={{ margin: 10, }}>
+                                <Button
+                                    success
+                                    style={{ width: 170, justifyContent: 'center' }}
+                                    onPress={this.goToGuest.bind(this)}
+                                >
+                                    {/* <Icon name="colsecircleo" type="AntDesign" /> */}
+                                    <Text style={{ color: '#ffffff', fontSize: 24, textAlign: 'center' }}>ผู้เยี่ยมชม</Text>
+                                </Button>
+                            </View>}
+                            <View style={{ margin: 10, }}>
+                                <Button
+                                    success
+                                    style={{ width: 170, justifyContent: 'center' }}
+                                    onPress={this.goToSignin.bind(this)}
+                                >
+                                    {/* <Icon name="colsecircleo" type="AntDesign" /> */}
+                                    <Text style={{ fontSize: 24 }}>เข้าสู่ระบบ</Text>
+                                </Button>
+                            </View>
+                            {isEmptyValues[this.state.uid] && <><View style={{ margin: 10, }}>
+                                <Button
+                                    success
+                                    style={{ width: 170, justifyContent: 'center' }}
+                                    onPress={this.goToRegister.bind(this, routeName.Signup)}
+                                >
+                                    {/* <Icon name="colsecircleo" type="AntDesign" /> */}
+                                    <Text style={{ fontSize: 24 }}>สมัครสมาชิก</Text>
+                                </Button>
+                            </View>
                                 <View >
-                                    <TouchableOpacity onPress={this.goToScreen.bind(this, routeName.ForgotPassword)}>
+                                    <TouchableOpacity onPress={this.goToForgotPassword.bind(this, routeName.ForgotPassword)}>
                                         <Text style={{ color: '#0080ff', textAlign: 'center', textDecorationLine: 'underline', fontSize: 20 }}>ลืมรหัสผ่าน</Text>
                                     </TouchableOpacity>
-                                </View>
-                            </View>
-                        }
+                                </View></>}
+                        </View>
+                        <View style={{ marginTop: 30 }}>
+                            <Text style={{ textAlign: 'center', fontSize: 12 }}>ผู้พัฒนา นายอดิศร ราชชิต {'\n'}
+                            Email : adison.ra.56@ubu.ac.th{'\n'}0809352590</Text>
+                        </View>
                     </View>
                 </Content>
                 <Footer style={{ backgroundColor: '#ffffff', height: 'auto' }}>
