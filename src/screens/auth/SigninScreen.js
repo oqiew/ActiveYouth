@@ -7,24 +7,123 @@ import { View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button } from 'native-base';
 import { routeName } from '../../route/routeName';
 import { connect } from 'react-redux';
-import { addProfile } from '../../redux/Reducer';
+import { addProfile, setArea } from '../../redux/Reducer';
+import Auth from '@react-native-firebase/auth'
+import Firestore from '@react-native-firebase/firestore'
+import { TableName } from '../../database/TableName'
 export class SigninScreen extends Component {
     constructor(props) {
         super(props);
+        this.tbUser = Firestore().collection(TableName.Users);
+        this.tbArea = Firestore().collection(TableName.Areas);
         this.state = {
             loading: false,
-            Email: '',
-            Password: '',
+            Email: 'asoyergas@gmail.com',
+            Password: '12345678',
             pass: true,
             icon: 'eye-with-line',
         }
     }
-    onSignin() {
-        this.props.addProfile({
-            isLogin: true,
-            Name: 'test'
+    componentDidMount() {
+        this.setState({
+            loading: true
         })
-        this.props.navigation.navigate(routeName.Home)
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            Auth().onAuthStateChanged((user) => {
+                if (user) {
+                    this.tbUser.doc(user.uid).get().then((doc) => {
+
+                        if (doc.exists) {
+                            this.props.addProfile({ uid: user.uid, email: user.email, ...doc.data() })
+                            this.tbArea.doc(doc.data().Area_ID).get().then((doc2) => {
+                                if (doc2.exists) {
+                                    this.props.setArea({ ID: doc2.id, ...doc2.data() })
+                                    this.setState({
+                                        loading: false
+                                    })
+                                    console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
+                                    this.props.navigation.navigate(routeName.Home)
+                                }
+                            })
+                        } else {
+                            this.props.addProfile({ uid: user.uid, email: user.email })
+                            this.setState({
+                                loading: false
+                            })
+                            console.log('home set user no profile', user.uid, user.email)
+                            this.props.navigation.navigate(routeName.ProfileEdit)
+                        }
+
+                    }).catch((error) => {
+                        this.props.addProfile({ uid: user.uid, email: user.email })
+                        this.setState({
+                            loading: false
+                        })
+                        console.log('error home set user no profile', user.uid, user.email)
+                        this.props.navigation.navigate(routeName.ProfileEdit)
+                    })
+                } else {
+                    this.setState({
+                        loading: false
+                    })
+                    console.log('You are not logged in.')
+
+                }
+            })
+        });
+
+    }
+    onSignin() {
+        const { Email, Password } = this.state;
+        this.setState({ loading: true });
+        console.log(Email, Password)
+        Auth().signInWithEmailAndPassword(Email, Password)
+            .then((user) => {
+                console.log('login success', user.user.uid)
+                query_user(user);
+            })
+            .catch((msgError) => {
+                this.setState({ loading: false });
+                this.props.addProfile({})
+                Alert.alert("can not login", msgError.message);
+            });
+        const query_user = (user) => {
+            var uid = '';
+            var email = '';
+            if (Platform.OS === 'ios') {
+                uid = user.uid;
+                email = user.email;
+            } else {
+                uid = user.user.uid;
+                email = user.user.email;
+            }
+            this.tbUser.doc(user.uid).get().then((doc) => {
+
+                if (doc.exists) {
+                    this.props.addProfile({ uid: uid, email: email, ...doc.data() })
+                    this.setState({
+                        loading: false
+                    })
+                    console.log('home set user', { uid: uid, email: email, ...doc.data() })
+                    this.props.navigation.navigate(routeName.Home)
+                } else {
+                    this.props.addProfile({ uid: uid, email: email })
+                    this.setState({
+                        loading: false
+                    })
+                    console.log('home set user no profile', uid, email)
+                    this.props.navigation.navigate(routeName.ProfileEdit)
+                }
+
+            }).catch((error) => {
+                this.props.addProfile({ uid: uid, email: email })
+                this.setState({
+                    loading: false
+                })
+                console.log('error home set user no profile', uid, email)
+                this.props.navigation.navigate(routeName.ProfileEdit)
+            })
+        }
     }
     hidePass() {
         if (this.state.pass) {
@@ -66,7 +165,7 @@ export class SigninScreen extends Component {
                         <Item floatingLabel>
                             <Icon active name='lock' type="AntDesign"></Icon>
                             <Label>password</Label>
-                            <Input secureTextEntry={this.state.pass} onChangeText={str => this.setState({ Password: str })} />
+                            <Input secureTextEntry={this.state.pass} value={this.state.Password} onChangeText={str => this.setState({ Password: str })} />
                             <Icon name={this.state.icon} onPress={this.hidePass.bind(this)} type="Entypo"></Icon>
                         </Item>
                         <View style={{ marginBottom: 10 }}></View>
@@ -97,7 +196,7 @@ const mapStateToProps = state => ({
 
 //used to action (dispatch) in to props
 const mapDispatchToProps = {
-    addProfile,
+    addProfile, setArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SigninScreen);

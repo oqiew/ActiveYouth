@@ -6,8 +6,8 @@ import themeStyle from '../styles/theme.style'
 import { View, Image, TouchableOpacity, Alert, Platform, BackHandler } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Grid, Col, FooterTab, Picker } from 'native-base';
 import { connect } from 'react-redux'
-import { addProfile } from '../redux/Reducer'
-import { isEmptyValues } from '../components/Method'
+import { addProfile, setArea } from '../redux/Reducer'
+import { isEmptyValues, isEmptyValue } from '../components/Method'
 import { routeName } from '../route/routeName'
 import Firestore from '@react-native-firebase/firestore'
 import { TableName } from '../database/TableName'
@@ -16,6 +16,8 @@ export class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.tbAreas = Firestore().collection(TableName.Areas);
+        this.tbUser = Firestore().collection(TableName.Users);
+
         this.state = {
             loading: false,
             ...this.props.userReducer.profile,
@@ -26,7 +28,17 @@ export class HomeScreen extends Component {
 
     }
     componentDidMount() {
+        console.log(this.props.userReducer.profile)
         this.tbAreas.onSnapshot(this.queryAreas);
+        if (!isEmptyValue(this.props.userReducer.profile.Area_ID)) {
+            this.tbAreas.doc(this.props.userReducer.profile.Area_ID).get().then((doc) => {
+                this.setState({
+                    Area: [{ ID: doc.id, ...doc.data() }]
+                })
+            })
+        } else {
+            console.log(this.props.userReducer.profile.Area_ID)
+        }
     }
     queryAreas = (query) => {
         const query_areas = [];
@@ -46,20 +58,29 @@ export class HomeScreen extends Component {
     }
 
     onSelectedArea(Area) {
-        this.setState({
-            Area
+        this.tbUser.doc(this.state.uid).update({
+            User_type: 'ay',
+            Area_ID: Area.ID
+        }).then(() => {
+            this.props.setArea({ Area })
+            this.setState({
+                Area
+            })
+        }).catch((error) => {
+            console.log('error update area', error)
         })
+
     }
     render() {
         const { loading, query_areas, Area } = this.state;
         const { Subdistrict, subdistricts, subdistrict, province, provinces } = this.state;
-        console.log(isEmptyValues([Area]))
+        console.log(this.props.userReducer)
         return (
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="หน้าหลัก" backHandler={this.onBackHandler}></HeaderAy>
                 <Content contentContainerStyle={[mainStyle.background, { display: "flex", justifyContent: "center", alignItems: 'center' }]}>
-                    {isEmptyValues([Area.Area_name]) ?
+                    {isEmptyValue(Area.Area_name) ?
                         query_areas.map((element, i) =>
                             <TouchableOpacity key={i} style={{
                                 backgroundColor: themeStyle.Color_green,
@@ -69,7 +90,7 @@ export class HomeScreen extends Component {
                                 width: "90%",
                                 margin: 5,
                             }}>
-                                <Text style={{ fontSize: 30, color: '#ffffff', textAlign: 'center' }}>{element.Area_name}</Text>
+                                <Text style={{ fontSize: 30, color: '#ffffff', textAlign: 'center' }} onPress={this.onSelectedArea.bind(this, element)}>{element.Area_name}</Text>
                             </TouchableOpacity>
                         )
 
@@ -224,7 +245,7 @@ const mapStateToProps = state => ({
 
 //used to action (dispatch) in to props
 const mapDispatchToProps = {
-    addProfile,
+    addProfile, setArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

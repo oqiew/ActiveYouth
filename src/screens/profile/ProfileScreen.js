@@ -9,7 +9,7 @@ import upload from '../../assets/upload.png'
 import mainStyle from '../../styles/main.style';
 import { routeName } from '../../route/routeName';
 import HeaderAy from '../../components/header/HeaderAy';
-
+import Auth from '@react-native-firebase/auth'
 export class ProfileScreen extends Component {
     constructor(props) {
         super(props);
@@ -28,6 +28,26 @@ export class ProfileScreen extends Component {
     onBackHandler = () => {
         this.props.navigation.goBack()
     }
+    logout = e => {
+        e.preventDefault();
+        this.setState({
+            loading: true
+        })
+        this.props.addProfile({});
+        Auth()
+            .signOut()
+            .then(response => {
+                this.setState({
+                    loading: false
+                })
+                this.props.navigation.reset({ index: 1, routes: [{ name: routeName.Welcome }] });
+                console.log('logout');
+                // this.props.navigation.navigate('Home');
+            });
+
+
+
+    };
     render() {
         const { loading } = this.state;
         const { uid, email, avatar_uri, Name, Lastname, Nickname, Sex, Phone_number, User_type,
@@ -120,7 +140,7 @@ export class ProfileScreen extends Component {
                             <Button
                                 danger
                                 style={{ margin: 10 }}
-                            // onPress={this.logout.bind(this)}
+                                onPress={this.logout.bind(this)}
                             >
                                 <Icon name="closecircleo" type="AntDesign" />
                                 <Text>ออกจากระบบ</Text>

@@ -15,10 +15,13 @@ import HeaderAy from '../../components/header/HeaderAy';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import themeStyle from '../../styles/theme.style';
 import { isEmptyValues } from '../../components/Method';
+import Firestore from '@react-native-firebase/firestore'
+import { TableName } from '../../database/TableName';
+
 export class UserListScreen extends Component {
     constructor(props) {
         super(props)
-
+        this.tbUser = Firestore().collection(TableName.Users);
         this.state = {
             laoding: false,
             Subdistrict: '',
@@ -38,7 +41,16 @@ export class UserListScreen extends Component {
     }
 
     componentDidMount() {
-
+        this.tbUser.onSnapshot(this.queryUser)
+    }
+    queryUser = (query) => {
+        const users = [];
+        query.forEach(doc => {
+            users.push({ ID: doc.id, ...doc.data() })
+        });
+        this.setState({
+            users
+        })
     }
     onCancel() {
 
@@ -154,40 +166,14 @@ export class UserListScreen extends Component {
                     <ScrollView>
                         {users.map((element, i) =>
                             <View key={i} style={{ padding: 10, marginLeft: 10, marginRight: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Image source={{ uri: element.Avatar_URL }} style={{ width: 50, height: 50, borderRadius: 50, marginRight: 20 }} ></Image>
-                                <Text style={{ fontSize: 16, width: 150, marginRight: 5 }}>{element.Name} {'\n'} {element.work}</Text>
+                                <Image source={{ uri: element.Avatar_URL }} style={{ width: 50, height: 50, borderRadius: 50 }} ></Image>
+                                <Text style={{ fontSize: 16, width: 170, marginRight: 5, backgroundColor: '#aeae' }}>{element.Name} {element.Lastname}{'\n'} {element.Email}</Text>
                                 <Text style={{ fontSize: 16 }}>{element.User_type}</Text>
                             </View>
                         )}
 
                     </ScrollView>
                 </Content>
-                {/* <Footer style={{ backgroundColor: '#ffffff', justifyContent: "space-around" }}>
-                    <TouchableOpacity
-                        style={{ justifyContent: 'center' }}
-                        onPress={this.onCancel.bind(this)}>
-                        <Image
-                            source={require('../../assets/maps.png')}
-                            style={{ width: 50, height: 50 }}></Image>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ justifyContent: 'center' }}
-                        onPress={() =>
-                            this.setState({ step: 'table' })
-                        }>
-                        <Image
-                            source={require('../../assets/table.png')}
-                            style={{ width: 60, height: 60 }}></Image>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() =>
-                            this.setState({ step: 'add' })
-                        }>
-                        <Image
-                            source={require('../../assets/add.png')}
-                            style={{ width: 50, height: 50 }}></Image>
-                    </TouchableOpacity>
-                </Footer> */}
             </Container>
         )
     }

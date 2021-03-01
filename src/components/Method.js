@@ -1,5 +1,10 @@
+
 export const isEmptyValues = (value) => {
+    console.log('get ', value)
     let result = false;
+    if (value === undefined) {
+        return result
+    }
     value.forEach(element => {
         if (element === '' || element === null || element === undefined) {
             result = true
@@ -8,5 +13,12 @@ export const isEmptyValues = (value) => {
 
     return result
 
+}
+export const isEmptyValue = (value) => {
+    if (value === '' || value === null || value === undefined) {
+        return true
+    } else {
+        return false
+    }
 }
 

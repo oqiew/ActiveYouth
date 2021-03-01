@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button } from 'native-base';
 import { connect } from 'react-redux';
-import { addProfile } from '../redux/Reducer';
+import { addProfile, setArea } from '../redux/Reducer';
 import Loading from '../components/Loading';
 
 import logo from '../assets/logo.png'
@@ -24,6 +24,7 @@ export class WelcomeScreen extends Component {
             ...this.props.userReducer.profile
         }
         this.tbUser = Firestore().collection(TableName.Users);
+        this.tbArea = Firestore().collection(TableName.Areas);
 
     }
     componentDidMount() {
@@ -37,11 +38,17 @@ export class WelcomeScreen extends Component {
 
                         if (doc.exists) {
                             this.props.addProfile({ uid: user.uid, email: user.email, ...doc.data() })
-                            this.setState({
-                                loading: false
+                            this.tbArea.doc(doc.data().Area_ID).get().then((doc2) => {
+                                if (doc2.exists) {
+                                    this.props.setArea({ ID: doc2.id, ...doc2.data() })
+                                    this.setState({
+                                        loading: false
+                                    })
+                                    console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
+                                    this.props.navigation.navigate(routeName.Home)
+                                }
                             })
-                            console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
-                            this.props.navigation.navigate(routeName.Home)
+
                         } else {
                             this.props.addProfile({ uid: user.uid, email: user.email })
                             this.setState({
@@ -82,7 +89,7 @@ export class WelcomeScreen extends Component {
         this.props.navigation.navigate(routeName.GuestHome)
     }
     goToSignin() {
-        if (isEmptyValues[this.state.uid]) {
+        if (this.state.uid === undefined) {
             this.props.navigation.navigate(routeName.Signin)
         } else {
             this.props.navigation.navigate(routeName.Home)
@@ -114,7 +121,7 @@ export class WelcomeScreen extends Component {
                         <View style={{
                             alignItems: 'center'
                         }}>
-                            {isEmptyValues[this.state.uid] && <View style={{ margin: 10, }}>
+                            {this.state.uid === undefined && <View style={{ margin: 10, }}>
                                 <Button
                                     success
                                     style={{ width: 170, justifyContent: 'center' }}
@@ -134,7 +141,7 @@ export class WelcomeScreen extends Component {
                                     <Text style={{ fontSize: 24 }}>เข้าสู่ระบบ</Text>
                                 </Button>
                             </View>
-                            {isEmptyValues[this.state.uid] && <><View style={{ margin: 10, }}>
+                            {this.state.uid === undefined && <><View style={{ margin: 10, }}>
                                 <Button
                                     success
                                     style={{ width: 170, justifyContent: 'center' }}
@@ -183,7 +190,7 @@ const mapStateToProps = state => ({
 
 //used to action (dispatch) in to props
 const mapDispatchToProps = {
-    addProfile,
+    addProfile, setArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(WelcomeScreen);
