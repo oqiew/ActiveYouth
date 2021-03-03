@@ -15,7 +15,7 @@ export class PopulationMScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            laoding: false,
+            loading: false,
             PopulationMs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -34,10 +34,10 @@ export class PopulationMScreen extends Component {
         this.props.navigation.goBack()
     }
     render() {
-        const { laoding, Subdistrict, PopulationMs } = this.state;
+        const { loading, Subdistrict, PopulationMs } = this.state;
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <HeaderAy name="ประชากร" backHandler={this.onBackHandler}></HeaderAy>
                 <Content contentContainerStyle={{ padding: 15 }}>
 

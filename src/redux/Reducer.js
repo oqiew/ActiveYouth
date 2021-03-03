@@ -4,14 +4,14 @@ export const userReducer = createSlice({
     name: 'user',
     initialState: {
         profile: [],
-        Area: []
+        area: []
     },
     reducers: {
         addProfile: (state, action) => {
             state.profile = (action.payload)
         },
         setArea: (state, action) => {
-            state.Area = (action.payload)
+            state.area = (action.payload)
         },
     }
 })

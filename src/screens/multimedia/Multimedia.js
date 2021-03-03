@@ -18,7 +18,7 @@ export class MultimediaScreen extends Component {
         super(props)
 
         this.state = {
-            laoding: false,
+            loading: false,
             Subdistrict: '',
             //   data
             step: "table",
@@ -45,10 +45,10 @@ export class MultimediaScreen extends Component {
         this.props.navigation.goBack()
     }
     render() {
-        const { laoding, multimedies, step } = this.state;
+        const { loading, multimedies, step } = this.state;
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <HeaderAy name="ข้อมูลศาสนา" backHandler={this.onBackHandler}></HeaderAy>
                 <Content contentContainerStyle={{ padding: 15 }}>
                     {step === 'add' &&

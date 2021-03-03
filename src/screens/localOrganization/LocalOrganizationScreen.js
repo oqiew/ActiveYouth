@@ -20,7 +20,7 @@ export class LocalOrganizationScreen extends Component {
         super(props)
 
         this.state = {
-            laoding: false,
+            loading: false,
             Subdistrict: '',
 
             showingInfoWindow: false,
@@ -118,7 +118,7 @@ export class LocalOrganizationScreen extends Component {
     }
 
     render() {
-        const { laoding, step, religion_maps, religion_uri, Religion_URL } = this.state;
+        const { loading, step, religion_maps, religion_uri, Religion_URL } = this.state;
         const { Religion_name, Religion_user, Religion_activity, Religion_alcohol,
             Relegion_covid19, Relegion_belief, } = this.state;
         const mstyle = StyleSheet.create({
@@ -134,7 +134,7 @@ export class LocalOrganizationScreen extends Component {
         });
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <HeaderAy name="อปท" backHandler={this.onBackHandler}></HeaderAy>
 
                 {step === 'map' &&

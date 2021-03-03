@@ -19,7 +19,7 @@ export class DashboardScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            laoding: false,
+            loading: false,
             Subdistrict: '',
             showingInfoWindow: false,
             position: { lat: 15.229399, lng: 104.857126 },
@@ -138,7 +138,7 @@ export class DashboardScreen extends Component {
         // })
     }
     render() {
-        const { laoding, step, religion_maps, religion_uri, Religion_URL } = this.state;
+        const { loading, step, religion_maps, religion_uri, Religion_URL } = this.state;
         const { Religion_name, Religion_user, Religion_activity, Religion_alcohol,
             Relegion_covid19, Relegion_belief, LM_type, subdistricts, subdistrict } = this.state;
         const mstyle = StyleSheet.create({
@@ -154,7 +154,7 @@ export class DashboardScreen extends Component {
         });
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <HeaderAy name={subdistrict} backHandler={this.onBackHandler}></HeaderAy>
                 {step === 'area' &&
                     <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>

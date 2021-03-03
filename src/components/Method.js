@@ -1,6 +1,5 @@
 
 export const isEmptyValues = (value) => {
-    console.log('get ', value)
     let result = false;
     if (value === undefined) {
         return result

@@ -17,28 +17,19 @@ export class HomeScreen extends Component {
         super(props);
         this.tbAreas = Firestore().collection(TableName.Areas);
         this.tbUser = Firestore().collection(TableName.Users);
-
         this.state = {
             loading: false,
             ...this.props.userReducer.profile,
             query_areas: [],
-            Area: [],
+            Area: this.props.userReducer.area,
+            select_area: false
         }
 
 
     }
     componentDidMount() {
-        console.log(this.props.userReducer.profile)
         this.tbAreas.onSnapshot(this.queryAreas);
-        if (!isEmptyValue(this.props.userReducer.profile.Area_ID)) {
-            this.tbAreas.doc(this.props.userReducer.profile.Area_ID).get().then((doc) => {
-                this.setState({
-                    Area: [{ ID: doc.id, ...doc.data() }]
-                })
-            })
-        } else {
-            console.log(this.props.userReducer.profile.Area_ID)
-        }
+
     }
     queryAreas = (query) => {
         const query_areas = [];
@@ -48,6 +39,33 @@ export class HomeScreen extends Component {
                 ...element.data()
             })
         });
+        // query_areas.forEach(element => {
+        //     this.tbAreas.doc(element.ID).set({
+        //         Area_name: element.Area_name,
+        //         District: element.District,
+        //         Dominance: element.Dominance,
+        //         Dominance: element.Dominance,
+        //         PopulationMs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //         PopulationFs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //         Family: 0,
+        //         career: '',
+        //         Family_Total_income: 0,
+        //         Tradition: '',
+        //         TraditionAndNarcotic: '',
+        //         ProtectAndNarcotic: '',
+        //         ProtectAndCovid: '',
+        //         Create_date: Firestore.Timestamp.now(),
+        //         Update_date: Firestore.Timestamp.now(),
+        //         Update_by_ID: ''
+
+        //     })
+        //  });
         this.setState({
             query_areas
         })
@@ -64,7 +82,8 @@ export class HomeScreen extends Component {
         }).then(() => {
             this.props.setArea({ Area })
             this.setState({
-                Area
+                Area,
+                select_area: false
             })
         }).catch((error) => {
             console.log('error update area', error)
@@ -72,16 +91,16 @@ export class HomeScreen extends Component {
 
     }
     render() {
-        const { loading, query_areas, Area } = this.state;
+        const { loading, query_areas, Area, select_area } = this.state;
         const { Subdistrict, subdistricts, subdistrict, province, provinces } = this.state;
-        console.log(this.props.userReducer)
         return (
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="หน้าหลัก" backHandler={this.onBackHandler}></HeaderAy>
-                <Content contentContainerStyle={[mainStyle.background, { display: "flex", justifyContent: "center", alignItems: 'center' }]}>
-                    {isEmptyValue(Area.Area_name) ?
-                        query_areas.map((element, i) =>
+
+                {isEmptyValue(Area.Area_name) || select_area ?
+                    <Content contentContainerStyle={[mainStyle.background, { display: "flex", justifyContent: "center", alignItems: 'center' }]}>
+                        {query_areas.map((element, i) =>
                             <TouchableOpacity key={i} style={{
                                 backgroundColor: themeStyle.Color_green,
                                 borderRadius: 10,
@@ -89,14 +108,21 @@ export class HomeScreen extends Component {
                                 padding: 12,
                                 width: "90%",
                                 margin: 5,
-                            }}>
-                                <Text style={{ fontSize: 30, color: '#ffffff', textAlign: 'center' }} onPress={this.onSelectedArea.bind(this, element)}>{element.Area_name}</Text>
+                            }}
+                                onPress={this.onSelectedArea.bind(this, element)}
+                            >
+                                <Text style={{ fontSize: 30, color: '#ffffff', textAlign: 'center' }} >{element.Area_name}</Text>
                             </TouchableOpacity>
-                        )
-
-                        :
+                        )}
+                    </Content>
+                    :
+                    <Content contentContainerStyle={[mainStyle.background, { display: "flex", justifyContent: "center", alignItems: 'center', height: '100%' }]}>
                         <View style={mainStyle.content}>
-                            <Text>{Subdistrict}</Text>
+                            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => this.setState({ select_area: true })}>
+                                <Text style={{ fontSize: 20 }}>{Area.Dominance} {Area.Area_name}</Text>
+                                <Icon name="edit" type="AntDesign"></Icon>
+                            </TouchableOpacity>
+
                             <Grid>
                                 <Col style={{ height: '100%', padding: 5 }}>
                                     <TouchableOpacity
@@ -205,9 +231,9 @@ export class HomeScreen extends Component {
                                     </TouchableOpacity>
                                 </Col>
                             </Grid>
-                        </View>}
+                        </View>
+                    </Content>}
 
-                </Content>
                 <Footer>
                     <FooterTab style={mainStyle.footer}>
                         <TouchableOpacity

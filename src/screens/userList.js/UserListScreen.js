@@ -22,8 +22,10 @@ export class UserListScreen extends Component {
     constructor(props) {
         super(props)
         this.tbUser = Firestore().collection(TableName.Users);
+        this.tbAreas = Firestore().collection(TableName.Areas);
+
         this.state = {
-            laoding: false,
+            loading: false,
             Subdistrict: '',
 
             showingInfoWindow: false,
@@ -37,16 +39,39 @@ export class UserListScreen extends Component {
             //   data
             searchName: '',
             users: [],
+            query_area: []
         }
     }
 
     componentDidMount() {
-        this.tbUser.onSnapshot(this.queryUser)
+        this.tbAreas.onSnapshot(this.queryAreas)
     }
-    queryUser = (query) => {
+    queryAreas = (query) => {
+        const query_area = [];
+        query.forEach(doc => {
+            query_area.push({ ID: doc.id, ...doc.data() })
+        });
+        this.setState({
+            query_area
+        }, () => {
+            this.tbUser.onSnapshot(this.queryUsers)
+        })
+
+    }
+    getArea(id) {
+        let temp = ''
+        this.state.query_area.forEach(element => {
+            if (element.ID === id) {
+                temp = element
+            }
+        });
+        return temp
+    }
+    queryUsers = (query) => {
         const users = [];
         query.forEach(doc => {
-            users.push({ ID: doc.id, ...doc.data() })
+            let temp_area = this.getArea(doc.data().Area_ID);
+            users.push({ ID: doc.id, ...doc.data(), Area: temp_area })
         });
         this.setState({
             users
@@ -133,7 +158,7 @@ export class UserListScreen extends Component {
         // })
     }
     render() {
-        const { laoding, step, religion_maps, religion_uri, Religion_URL } = this.state;
+        const { loading, step, religion_maps, religion_uri, Religion_URL } = this.state;
         const { Religion_name, Religion_user, Religion_activity, Religion_alcohol,
             Relegion_covid19, Relegion_belief, searchName, users } = this.state;
         const mstyle = StyleSheet.create({
@@ -147,9 +172,10 @@ export class UserListScreen extends Component {
                 flex: 1,
             },
         });
+        // console.log(this.state.users)
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <HeaderAy name="ทำเนียบ" backHandler={this.onBackHandler}></HeaderAy>
                 <Header searchBar rounded style={{ backgroundColor: themeStyle.Color_green }}>
                     <Item>
@@ -163,17 +189,19 @@ export class UserListScreen extends Component {
                     </Item>
                 </Header>
                 <Content>
-                    <ScrollView>
-                        {users.map((element, i) =>
-                            <View key={i} style={{ padding: 10, marginLeft: 10, marginRight: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Image source={{ uri: element.Avatar_URL }} style={{ width: 50, height: 50, borderRadius: 50 }} ></Image>
-                                <Text style={{ fontSize: 16, width: 170, marginRight: 5, backgroundColor: '#aeae' }}>{element.Name} {element.Lastname}{'\n'} {element.Email}</Text>
-                                <Text style={{ fontSize: 16 }}>{element.User_type}</Text>
-                            </View>
-                        )}
+                    {users.map((element, i) =>
+                        <View key={i} style={{ padding: 10, marginLeft: 10, marginRight: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Image source={{ uri: element.Avatar_URL }} style={{ width: 50, height: 50, borderRadius: 50 }} ></Image>
+                            <Text style={{ fontSize: 16, width: 170, marginRight: 5 }}>{element.Name} {element.Lastname}{'\n'}
+                                {element.Email}{'\n'}{element.Area.Dominance}{element.Area.Area_name}
+                            </Text>
+                            <Text style={{ fontSize: 16 }}>{element.User_type}</Text>
+                        </View>
+                    )}
 
-                    </ScrollView>
+
                 </Content>
+
             </Container>
         )
     }

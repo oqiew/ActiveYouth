@@ -17,14 +17,16 @@ export class SubdistrictScreen extends Component {
         super(props)
 
         this.state = {
-            laoding: false,
+            loading: false,
             Subdistrict: '',
             //   data
             Family: '',
             career: '',
             Family_Total_income: '',
-            Family_environtment: '',
-            Family_status: '',
+            Tradition: '',
+            TraditionAndNarcotic: '',
+            ProtectAndNarcotic: '',
+            ProtectAndCovid: '',
         }
 
     }
@@ -37,12 +39,13 @@ export class SubdistrictScreen extends Component {
         this.props.navigation.goBack()
     }
     render() {
-        const { laoding, Family, career, Family_Total_income, Family_environtment, Family_status, } = this.state;
+        const { loading, Family, career, Family_Total_income, Tradition,
+            TraditionAndNarcotic, ProtectAndNarcotic, ProtectAndCovid, } = this.state;
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <HeaderAy name="ข้อมูลตำบล" backHandler={this.onBackHandler}></HeaderAy>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={mainStyle.background}>
 
                     <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
                         <Button onPress={() => this.props.navigation.navigate(routeName.PopulationM)}><Text>ประชากรเพศชาย</Text></Button>
@@ -56,7 +59,7 @@ export class SubdistrictScreen extends Component {
                             onChangeText={str => this.setState({ Family: str })}
                         />
                     </Item>
-                    <Item fixedLabel>
+                    <Item stackedLabel>
                         <Label>อาชีพ :</Label>
 
                         <Textarea rowSpan={4} value={career} style={{ fontSize: 16 }}
@@ -69,27 +72,30 @@ export class SubdistrictScreen extends Component {
                             keyboardType='numeric'
                             onChangeText={str => this.setState({ Family_Total_income: str })} />
                     </Item>
-                    <Item fixedLabel>
+                    <Item stackedLabel>
                         <Label>ประเพณี :</Label>
 
-                        <Textarea rowSpan={4} style={{ fontSize: 16 }}
+                        <Textarea rowSpan={4} style={{ fontSize: 16 }} value={Tradition}
+                            onChangeText={str => this.setState({ Tradition: str })}
                             placeholder="ประเพณี วัฒนธรรมที่เป็นเอกสารลักษณ์ของตำบล" />
                     </Item>
-                    <Item fixedLabel>
+                    <Item stackedLabel>
                         <Label>ประเพณีมีการสูบบุหรี่ ดื่มสุรา  :</Label>
 
-                        <Textarea rowSpan={4} style={{ fontSize: 16 }}
+                        <Textarea rowSpan={4} style={{ fontSize: 16 }} value={TraditionAndNarcotic}
+                            onChangeText={str => this.setState({ TraditionAndNarcotic: str })}
                             placeholder="บุญประเพณีของพื้นที่ที่เกี่ยวข้องกับการสูบบุหรี่ ดื่มสุราจากมากไปหาน้อย (5 ลำดับ)" />
                     </Item>
-                    <Item fixedLabel>
+                    <Item stackedLabel>
                         <Label>กิจกรรมส่งเสริมสุขภาพ :</Label>
 
-                        <Textarea rowSpan={4} style={{ fontSize: 16 }}
+                        <Textarea rowSpan={4} style={{ fontSize: 16 }} value={ProtectAndNarcotic}
+                            onChangeText={str => this.setState({ ProtectAndNarcotic: str })}
                             placeholder="กิจกรรมหรือแนวทางการส่งเสริมสุขภาพและการลดปัจจัยเสี่ยงสุขภาพ (บุหรี่ สุรา อุบัติเหตุ ฯลฯ)ที่ผ่านมาของชุมชน" />
-                    </Item><Item fixedLabel>
+                    </Item><Item stackedLabel>
                         <Label>กิจกรรมส่งเสริมสุขภาพ ในช่วง covid 19 :</Label>
-
-                        <Textarea rowSpan={4} style={{ fontSize: 16 }}
+                        <Textarea rowSpan={5} style={{ fontSize: 16 }} value={ProtectAndCovid}
+                            onChangeText={str => this.setState({ ProtectAndCovid: str })}
                             placeholder="กิจกรรมหรือแนวทางการส่งเสริมสุขภาพและการลดปัจจัยเสี่ยงสุขภาพ (บุหรี่ สุรา อุบัติเหตุ ฯลฯ)ในช่วงการแพร่ระบาดของโควิด-19ที่ผ่านมาของชุมชน" />
                     </Item>
                 </Content>

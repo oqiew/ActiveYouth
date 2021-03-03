@@ -17,7 +17,7 @@ export class WelcomeScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            laoding: false,
+            loading: false,
             Email: '',
             Password: '',
             confirm_password: '',
@@ -102,10 +102,10 @@ export class WelcomeScreen extends Component {
         this.props.navigation.navigate(routeName.ForgotPassword)
     }
     render() {
-        const { laoding } = this.state;
+        const { loading } = this.state;
         return (
             <Container>
-                <Loading visible={laoding}></Loading>
+                <Loading visible={loading}></Loading>
                 <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>
                     <View style={mainStyle.content}>
                         <Image

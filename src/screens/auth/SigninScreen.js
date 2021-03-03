@@ -97,8 +97,8 @@ export class SigninScreen extends Component {
                 uid = user.user.uid;
                 email = user.user.email;
             }
-            this.tbUser.doc(user.uid).get().then((doc) => {
-
+            this.tbUser.doc(uid).get().then((doc) => {
+                console.log(doc.data())
                 if (doc.exists) {
                     this.props.addProfile({ uid: uid, email: email, ...doc.data() })
                     this.setState({

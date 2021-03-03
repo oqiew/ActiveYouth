@@ -39,4 +39,39 @@ export default StyleSheet.create({
         marginBottom: 5,
         fontWeight: 'bold'
     },
+    map_bubble: {
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+        backgroundColor: '#fff',
+        borderRadius: 6,
+        borderColor: '#ccc',
+        borderWidth: 0.5,
+        alignSelf: 'center',
+        width: 110,
+        padding: 5
+    },
+    map_arrow: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#fff',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -32
+    },
+    map_arrowBorder: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#007a87',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -0.5
+    },
+    map_name: {
+        fontSize: 16,
+        marginBottom: 5
+    },
+    map_image: {
+        width: 100,
+        height: 100,
+    }
 })
