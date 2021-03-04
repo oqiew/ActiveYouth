@@ -39,6 +39,15 @@ export default StyleSheet.create({
         marginBottom: 5,
         fontWeight: 'bold'
     },
+    main_map: {
+        ...StyleSheet.absoluteFillObject,
+        width: '100%',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        zIndex: -1,
+        position: 'relative',
+        flex: 1,
+    },
     map_bubble: {
         flexDirection: 'column',
         alignSelf: 'flex-start',

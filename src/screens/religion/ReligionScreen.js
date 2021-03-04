@@ -14,17 +14,16 @@ import { routeName } from '../../route/routeName';
 import HeaderAy from '../../components/header/HeaderAy';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import themeStyle from '../../styles/theme.style';
-import { isEmptyValue, isEmptyValues } from '../../components/Method';
+import { isEmptyValue, isEmptyValues, uploadImage, deleteData, deleteImage } from '../../components/Method';
 import Geolocation from '@react-native-community/geolocation';
 import { TableName } from '../../database/TableName';
 import Firestore from '@react-native-firebase/firestore'
-import Storage from '@react-native-firebase/storage'
 import temple from '../../assets/map/temple.png'
+const tbMain = Firestore().collection(TableName.Religions);
+const tbname = TableName.Religions;
 export class ReligionScreen extends Component {
     constructor(props) {
         super(props)
-        this.tbReligionMap = Firestore().collection(TableName.Religions);
-
         this.state = {
             loading: false,
             ...this.props.userReducer.profile,
@@ -34,8 +33,8 @@ export class ReligionScreen extends Component {
             position: { lat: 15.229399, lng: 104.857126 },
             position2: { lat: 15.229399, lng: 104.857126 },
             step: 'map',
-            religion_maps: [],
-            religion_maps_marker: [],
+            maps_data: [],
+            maps_marker: [],
             map_image_uri: '',
             Map_image_URL: '',
             new_upload_image: false,
@@ -52,15 +51,17 @@ export class ReligionScreen extends Component {
     }
 
     componentDidMount() {
-        this.tbReligionMap.onSnapshot(this.ListMark);
+        tbMain
+            .where('Area_ID', '==', this.state.Area.ID)
+            .onSnapshot(this.ListMark);
     }
     ListMark = querySnapshot => {
 
         this.setState({
             loading: true,
         });
-        const religion_maps = [];
-        const religion_maps_marker = [];
+        const maps_data = [];
+        const maps_marker = [];
         let count = 0;
 
         querySnapshot.forEach(doc => {
@@ -70,7 +71,7 @@ export class ReligionScreen extends Component {
                 Relegion_covid19, Relegion_belief, Position
             } = doc.data();
             if (!isEmptyValue(Position)) {
-                religion_maps_marker.push(
+                maps_marker.push(
                     <Marker
                         key={count}
 
@@ -102,8 +103,7 @@ export class ReligionScreen extends Component {
                         </Callout>
                     </Marker >,
                 );
-                console.log(Map_image_URL)
-                religion_maps.push({
+                maps_data.push({
                     ID: doc.id,
                     ...doc.data()
                 });
@@ -113,8 +113,8 @@ export class ReligionScreen extends Component {
         });
 
         this.setState({
-            religion_maps,
-            religion_maps_marker,
+            maps_data,
+            maps_marker,
             loading: false,
         });
     };
@@ -139,23 +139,6 @@ export class ReligionScreen extends Component {
             },
         });
     };
-    uploadImage(id) {
-        console.log("upload image")
-        try {
-            return new Promise((resolve, reject) => {
-                const imageRef = Storage().ref('Religion').child("religion" + id + '.jpg')
-                let mime = 'image/jpg';
-                imageRef.putFile(this.state.map_image_uri, { contentType: mime })
-                    .then(() => { return imageRef.getDownloadURL() })
-                    .then((url) => {
-                        resolve(url)
-                    })
-                    .catch((error) => { reject(error) })
-            })
-        } catch (error) {
-            console.log("upload image", error)
-        }
-    }
     _handleChoosePhoto = () => {
         const options = {
             title: 'เลือกรูปโปรไฟล์',
@@ -215,7 +198,6 @@ export class ReligionScreen extends Component {
 
     };
     onSubmit = async () => {
-        console.log(this.state.Area)
         this.setState({
             loading: true
         })
@@ -231,90 +213,96 @@ export class ReligionScreen extends Component {
                 new_id = Date.now().toString();
             }
             if (new_upload_image) {
-                temp_image_URL = await this.uploadImage(new_id);
+                temp_image_URL = await uploadImage('Religion', new_id, map_image_uri);
             } else {
                 temp_image_URL = Map_image_URL
             }
+            if (!isEmptyValue(temp_image_URL)) {
+                if (
+                    !isEmptyValue(Religion_name) &&
+                    !isEmptyValue(Religion_user) &&
+                    !isEmptyValue(Religion_activity) &&
+                    !isEmptyValue(Religion_alcohol) &&
+                    !isEmptyValue(Relegion_covid19) &&
+                    !isEmptyValue(Relegion_belief)
+                ) {
+                    if (isEmptyValue(this.state.edit_ID)) {
+                        // add
+                        console.log('add religion')
 
-            if (
-                !isEmptyValue(Religion_name) &&
-                !isEmptyValue(Religion_user) &&
-                !isEmptyValue(Religion_activity) &&
-                !isEmptyValue(Religion_alcohol) &&
-                !isEmptyValue(Relegion_covid19) &&
-                !isEmptyValue(Relegion_belief)
-            ) {
-                if (isEmptyValue(this.state.edit_ID)) {
-                    // add
-                    console.log('add religion')
+                        tbMain
+                            .doc(new_id)
+                            .set({
+                                Area_ID: this.state.Area.ID,
+                                Update_by_ID: this.state.uid,
+                                Create_date: Firestore.Timestamp.now(),
+                                Update_date: Firestore.Timestamp.now(),
+                                Map_image_URL: temp_image_URL,
+                                Map_image_name: new_id,
+                                Religion_name,
+                                Religion_user,
+                                Religion_activity,
+                                Religion_alcohol,
+                                Relegion_covid19,
+                                Relegion_belief,
+                                Position: position
 
-                    this.tbReligionMap
-                        .doc(new_id)
-                        .set({
-                            Area_ID: this.state.Area.ID,
-                            Update_by_ID: this.state.uid,
-                            Create_date: Firestore.Timestamp.now(),
-                            Update_date: Firestore.Timestamp.now(),
-                            Map_image_URL: temp_image_URL,
-                            Map_image_name: new_id,
-                            Religion_name,
-                            Religion_user,
-                            Religion_activity,
-                            Religion_alcohol,
-                            Relegion_covid19,
-                            Relegion_belief,
-                            Position: position
+                            })
+                            .then(result => {
+                                Alert.alert('บันทึกสำเร็จ');
+                                this.onCancel();
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this.setState({
+                                    loading: false,
+                                });
 
-                        })
-                        .then(result => {
-                            Alert.alert('บันทึกสำเร็จ');
-                            this.onCancel();
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            this.setState({
-                                loading: false,
                             });
 
-                        });
+                    } else {
+                        // update
+                        console.log('update religion')
+                        tbMain
+                            .doc(this.state.edit_ID)
+                            .update({
+                                Area_ID: this.state.Area.ID,
+                                Update_by_ID: this.state.uid,
+                                Update_date: Firestore.Timestamp.now(),
+                                Map_image_URL: temp_image_URL,
+                                Map_image_name: new_id,
+                                Religion_name,
+                                Religion_user,
+                                Religion_activity,
+                                Religion_alcohol,
+                                Relegion_covid19,
+                                Relegion_belief,
+                                Position: position
+                            })
+                            .then(result => {
+                                Alert.alert('อัพเดตสำเร็จ');
+                                this.onCancel();
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this.setState({
+                                    loading: false,
+                                });
 
+                            });
+                    }
                 } else {
-                    // update
-                    console.log('update religion')
-                    this.tbReligionMap
-                        .doc(this.state.edit_ID)
-                        .update({
-                            Area_ID: this.state.Area.ID,
-                            Update_by_ID: this.state.uid,
-                            Update_date: Firestore.Timestamp.now(),
-                            Map_image_URL: temp_image_URL,
-                            Map_image_name: new_id,
-                            Religion_name,
-                            Religion_user,
-                            Religion_activity,
-                            Religion_alcohol,
-                            Relegion_covid19,
-                            Relegion_belief,
-                            Position: position
-                        })
-                        .then(result => {
-                            Alert.alert('อัพเดตสำเร็จ');
-                            this.onCancel();
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            this.setState({
-                                loading: false,
-                            });
+                    alert('กรุณากรอกข้อมูลให้ครบ');
+                    this.setState({
+                        loading: false,
+                    });
 
-                        });
                 }
             } else {
-                alert('กรุณากรอกข้อมูลให้ครบ');
                 this.setState({
                     loading: false,
                 });
-
+                alert('กรุณาอัพโหลดรูปภาพ');
             }
         } catch (error) {
             console.log(error);
@@ -337,29 +325,42 @@ export class ReligionScreen extends Component {
             step: 'map'
         })
     }
-    onEdit = () => {
+    onEdit = (data) => {
+        this.setState({
+            Map_image_URL: data.Map_image_URL,
+            Map_image_name: data.Map_image_name,
+            new_upload_image: false,
+            //   data
+            Religion_name: data.Religion_name,
+            Religion_user: data.Religion_user,
+            Religion_activity: data.Religion_activity,
+            Religion_alcohol: data.Religion_alcohol,
+            Relegion_covid19: data.Relegion_covid19,
+            Relegion_belief: data.Relegion_belief,
+            position: data.Position,
+            edit_ID: data.ID,
+            loading: false,
 
+            step: 'add'
+        })
     }
-    onDelete = () => {
-
+    onDelete = async (data) => {
+        const resultImage = await deleteImage(data.Map_image_URL);
+        const resultData = await deleteData(tbname, data.ID);
+        if (!resultImage.status) {
+            console.log(resultImage.message)
+        }
+        if (resultData.status) {
+            Alert.alert(resultData.message)
+        } else {
+            console.log(resultData.message)
+        }
     }
 
     render() {
-        const { loading, step, religion_maps, map_image_uri } = this.state;
+        const { loading, step, maps_data, map_image_uri } = this.state;
         const { Map_image_URL, Religion_name, Religion_user, Religion_activity, Religion_alcohol,
             Relegion_covid19, Relegion_belief, } = this.state;
-        const mstyle = StyleSheet.create({
-            map: {
-                ...StyleSheet.absoluteFillObject,
-                width: '100%',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                zIndex: -1,
-                position: 'relative',
-                flex: 1,
-            },
-        });
-        console.log(this.state.step)
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -368,7 +369,7 @@ export class ReligionScreen extends Component {
                 {step === 'map' &&
                     <MapView
                         onPress={this.onMapPress.bind(this)}
-                        style={mstyle.map}
+                        style={mainStyle.main_map}
                         zoomEnabled={true}
                         toolbarEnabled={true}
                         showsUserLocation={true}
@@ -385,7 +386,7 @@ export class ReligionScreen extends Component {
 
 
                         </Marker>
-                        {this.state.religion_maps_marker}
+                        {this.state.maps_marker}
                     </MapView>}
                 {step === 'table' &&
                     <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>
@@ -405,7 +406,7 @@ export class ReligionScreen extends Component {
                                 }}>
                             </View>
                             <ScrollView >
-                                {religion_maps.map((element, i) => (
+                                {maps_data.map((element, i) => (
                                     <View key={i} style={{
                                         flex: 1,
                                         flexDirection: 'row',
@@ -448,7 +449,7 @@ export class ReligionScreen extends Component {
 
                                         <View style={{ width: '15%', justifyContent: 'center', flexDirection: 'column', margin: 10, }}>
                                             <TouchableOpacity
-                                                onPress={this.onEdit.bind(this, element, element.Key,)}>
+                                                onPress={this.onEdit.bind(this, element)}>
                                                 <Image
                                                     source={require('../../assets/pencil.png')}
                                                     style={{ width: 25, height: 25, justifyContent: 'center', }}></Image>
