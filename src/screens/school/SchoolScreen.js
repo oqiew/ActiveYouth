@@ -170,6 +170,7 @@ export class SchoolScreen extends Component {
         })
     }
     findCoordinates = () => {
+        this.setState({ loading: true })
         Geolocation.getCurrentPosition(
             position => {
                 console.log(position.coords.latitude
@@ -179,9 +180,11 @@ export class SchoolScreen extends Component {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
                     },
+                    loading: false
                 });
             },
             error => {
+                this.setState({ loading: false })
                 console.log(error);
             },
             {
@@ -210,7 +213,7 @@ export class SchoolScreen extends Component {
                 new_id = Date.now().toString();
             }
             if (new_upload_image) {
-                temp_image_URL = await uploadImage('School', new_id, map_image_uri);
+                temp_image_URL = await uploadImage(tbname, new_id, map_image_uri);
             } else {
                 temp_image_URL = Map_image_URL
             }

@@ -13,7 +13,6 @@ export default StyleSheet.create({
     background: {
         padding: 15,
         backgroundColor: '#f0f2f5',
-
     },
     content: {
         flex: 1,

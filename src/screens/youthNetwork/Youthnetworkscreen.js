@@ -14,7 +14,13 @@ import { routeName } from '../../route/routeName';
 import HeaderAy from '../../components/header/HeaderAy';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import themeStyle from '../../styles/theme.style';
-import { isEmptyValues } from '../../components/Method';
+import { isEmptyValue, isEmptyValues, uploadImage, deleteData, deleteImage } from '../../components/Method';
+import Geolocation from '@react-native-community/geolocation';
+import { TableName } from '../../database/TableName';
+import Firestore from '@react-native-firebase/firestore'
+import user_network from '../../assets/map/user_network.png'
+const tbMain = Firestore().collection(TableName.YouthNetworks);
+const tbname = TableName.YouthNetworks;
 export class Youthnetworkscreen extends Component {
     constructor(props) {
         super(props)
@@ -22,7 +28,6 @@ export class Youthnetworkscreen extends Component {
         this.state = {
             loading: false,
             Subdistrict: '',
-
             showingInfoWindow: false,
             position: { lat: 15.229399, lng: 104.857126 },
             position2: { lat: 15.229399, lng: 104.857126 },
@@ -31,25 +36,82 @@ export class Youthnetworkscreen extends Component {
             religion_uri: '',
             Religion_URL: '',
             new_upload_image: false,
-            //   data
-            Religion_name: '',
-            Religion_user: '',
-            Religion_activity: '',
-            Religion_alcohol: '',
-            Relegion_covid19: '',
-            Relegion_belief: '',
-
-
-
+            edit_ID: '',
+            more_detail: '',
+            map_image_uri: '',
+            Map_image_URL: '',
+            ...this.props.userReducer.profile,
+            Area: this.props.userReducer.area,
+            //data
+            Yn_name: '',
+            Yn_description: '',
+            Yn_phone_number: '',
         }
     }
 
     componentDidMount() {
-
+        tbMain.where('Area_ID', '==', this.state.Area.ID)
+            .onSnapshot(this.ListMark);
     }
-    onCancel() {
+    ListMark = querySnapshot => {
+        this.setState({
+            loading: true,
+        });
+        const maps_data = [];
+        const maps_marker = [];
+        let count = 0;
+        querySnapshot.forEach(doc => {
+            // console.log(doc.data())
+            const {
+                Map_image_URL, Position,
+                Yn_name,
+                Yn_description,
+                Yn_phone_number,
+            } = doc.data();
+            if (!isEmptyValue(Position)) {
+                maps_marker.push(
+                    <Marker
+                        key={count}
+                        coordinate={{
+                            latitude: Position.lat,
+                            longitude: Position.lng,
+                        }}
+                        // image={icon_m}
+                        icon={user_network}
+                    // label={count}
+                    >
+                        <Callout tooltip>
+                            <View>
+                                <View style={mainStyle.map_bubble}>
+                                    <Text style={mainStyle.map_name}>{Yn_name}</Text>
+                                    <Text style={{ fontSize: 12, color: '#6a6a6a', flexWrap: 'wrap' }}>{Yn_description}</Text>
+                                    <Text style={{ position: "relative", bottom: 40, width: 100, height: 100, }}>
+                                        <Image style={{
+                                            width: 100, height: 100,
+                                        }} source={{ uri: Map_image_URL }} resizeMode="cover" >
+                                        </Image>
+                                    </Text>
 
-    }
+                                </View>
+                                <View style={mainStyle.map_arrowBorder}></View>
+                                <View style={mainStyle.map_arrow}></View>
+                            </View>
+                        </Callout>
+                    </Marker >,
+                );
+                maps_data.push({
+                    ID: doc.id,
+                    ...doc.data()
+                });
+            }
+            count++;
+        });
+        this.setState({
+            maps_data,
+            maps_marker,
+            loading: false,
+        });
+    };
     onBackHandler = () => {
         this.props.navigation.goBack()
     }
@@ -93,7 +155,7 @@ export class Youthnetworkscreen extends Component {
                 ImageResizer.createResizedImage(Platform.OS === "android" ? response.path : response.uri, 300, 300, 'JPEG', 100)
                     .then(({ uri }) => {
                         this.setState({
-                            religion_uri: uri,
+                            map_image_uri: uri,
                             // map_image_file_name: response.fileName,
                             new_upload_image: true
                         })
@@ -104,34 +166,189 @@ export class Youthnetworkscreen extends Component {
             }
         })
     }
-    onSubmit = async () => {
-
-    }
-    onCancel = () => {
-
-    }
-    onEdit = () => {
-
-    }
-    onDelete = () => {
-
-    }
-
-    render() {
-        const { loading, step, religion_maps, religion_uri, Religion_URL } = this.state;
-        const { Religion_name, Religion_user, Religion_activity, Religion_alcohol,
-            Relegion_covid19, Relegion_belief, } = this.state;
-        const mstyle = StyleSheet.create({
-            map: {
-                ...StyleSheet.absoluteFillObject,
-                width: '100%',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                zIndex: -1,
-                position: 'relative',
-                flex: 1,
+    findCoordinates = () => {
+        this.setState({ loading: true })
+        Geolocation.getCurrentPosition(
+            position => {
+                console.log(position.coords.latitude
+                    , ",", position.coords.longitude);
+                this.setState({
+                    position: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    },
+                    loading: false
+                });
             },
-        });
+            error => {
+                this.setState({ loading: false })
+                console.log(error);
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: 10000,
+                maximumAge: 10000,
+                distanceFilter: 50,
+                forceRequestLocation: true,
+            },
+        );
+
+    };
+    onSubmit = async () => {
+        console.log('call')
+        this.setState({
+            loading: true
+        })
+        try {
+            const { map_image_uri, Map_image_URL, new_upload_image, Map_image_name, position } = this.state;
+            const { Yn_name,
+                Yn_description,
+                Yn_phone_number, } = this.state;
+            let temp_image_URL = "";
+            let new_id = '';
+            if (!isEmptyValue(this.state.edit_ID)) {
+                new_id = Map_image_name;
+            } else {
+                new_id = Date.now().toString();
+            }
+            if (new_upload_image) {
+                temp_image_URL = await uploadImage(tbname, new_id, map_image_uri);
+            } else {
+                temp_image_URL = Map_image_URL
+            } s
+            if (!isEmptyValue(temp_image_URL)) {
+                if (
+                    !isEmptyValue(Yn_name) &&
+                    !isEmptyValue(Yn_description) &&
+                    !isEmptyValue(Yn_phone_number)
+                ) {
+                    if (isEmptyValue(this.state.edit_ID)) {
+                        // add
+                        console.log('add religion')
+
+                        tbMain
+                            .doc(new_id)
+                            .set({
+                                Area_ID: this.state.Area.ID,
+                                Update_by_ID: this.state.uid,
+                                Create_date: Firestore.Timestamp.now(),
+                                Update_date: Firestore.Timestamp.now(),
+                                Map_image_URL: temp_image_URL,
+                                Map_image_name: new_id,
+                                Position: position,
+                                Yn_name,
+                                Yn_description,
+                                Yn_phone_number,
+
+                            })
+                            .then(result => {
+                                Alert.alert('บันทึกสำเร็จ');
+                                this.onCancel();
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this.setState({
+                                    loading: false,
+                                });
+
+                            });
+
+                    } else {
+                        // update
+                        console.log('update religion')
+                        tbMain.doc(this.state.edit_ID)
+                            .update({
+                                Area_ID: this.state.Area.ID,
+                                Update_by_ID: this.state.uid,
+                                Update_date: Firestore.Timestamp.now(),
+                                Map_image_URL: temp_image_URL,
+                                Map_image_name: new_id,
+                                Position: position,
+                                Yn_name,
+                                Yn_description,
+                                Yn_phone_number,
+                            })
+                            .then(result => {
+                                Alert.alert('อัพเดตสำเร็จ');
+                                this.onCancel();
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this.setState({
+                                    loading: false,
+                                });
+
+                            });
+                    }
+                } else {
+                    alert('กรุณากรอกข้อมูลให้ครบ');
+                    this.setState({
+                        loading: false,
+                    });
+
+                }
+            } else {
+                this.setState({
+                    loading: false,
+                });
+                alert('กรุณาอัพโหลดรูปภาพ');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    onCancel() {
+        this.setState({
+            map_image_uri: '',
+            Map_image_URL: '',
+            new_upload_image: false,
+            Religion_name: '',
+            edit_ID: '',
+            loading: false,
+            step: 'map',
+            Yn_name: '',
+            Yn_description: '',
+            Yn_phone_number: '',
+
+        })
+    }
+    onEdit = (data) => {
+        this.setState({
+            Map_image_URL: data.Map_image_URL,
+            new_upload_image: false,
+            Map_image_name: data.Map_image_name,
+            position: data.Position,
+            edit_ID: data.ID,
+            loading: false,
+            step: 'add',
+            //   data
+            Yn_name: data.Yn_name,
+            Yn_description: data.Yn_description,
+            Yn_phone_number: data.Yn_phone_number,
+        })
+    }
+    onDelete = async (data) => {
+
+        const resultImage = await deleteImage(data.Map_image_URL);
+        const resultData = await deleteData(tbname, data.ID);
+
+        if (!resultImage.status) {
+            console.log(resultImage.message)
+        } else {
+            console.log(resultImage.message)
+        }
+        if (resultData.status) {
+            Alert.alert(resultData.message)
+        } else {
+            console.log(resultData.message)
+        }
+
+    }
+    render() {
+        const { loading, step, maps_data, map_image_uri, Map_image_URL } = this.state;
+        const { Yn_name,
+            Yn_description,
+            Yn_phone_number } = this.state;
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -140,7 +357,7 @@ export class Youthnetworkscreen extends Component {
                 {step === 'map' &&
                     <MapView
                         onPress={this.onMapPress.bind(this)}
-                        style={mstyle.map}
+                        style={mainStyle.main_map}
                         zoomEnabled={true}
                         toolbarEnabled={true}
                         showsUserLocation={true}
@@ -154,9 +371,8 @@ export class Youthnetworkscreen extends Component {
                                 latitude: this.state.position.lat,
                                 longitude: this.state.position.lng,
                             }}>
-
-
                         </Marker>
+                        {this.state.maps_marker}
                     </MapView>}
                 {step === 'table' &&
                     <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>
@@ -171,73 +387,55 @@ export class Youthnetworkscreen extends Component {
                                 ตารางข้อมูล</Text>
                             <View
                                 style={{
-
                                     flexDirection: 'row',
                                     borderBottomWidth: 1,
                                 }}>
-                                <Text
-                                    style={{
-                                        fontWeight: 'bold',
-                                        margin: 10,
-                                        width: '20%',
-                                        textAlign: 'center',
-                                    }}>
-                                    ชื่อพื้นที่</Text>
-                                <Text
-                                    style={{
-                                        fontWeight: 'bold',
-                                        margin: 10,
-                                        width: '20%',
-                                        textAlign: 'center',
-                                    }}>
-                                    ลักษณะพื้นที่</Text>
-                                <Text
-                                    style={{
-                                        fontWeight: 'bold',
-                                        margin: 10,
-                                        width: '20%',
-                                        textAlign: 'center',
-                                    }}>
-                                    ผู้เพิ่มข้อมูล</Text>
-                                <Text
-                                    style={{
-                                        fontWeight: 'bold',
-                                        margin: 10,
-                                        width: '20%',
-                                        textAlign: 'center',
-                                    }}>
-                                    แก้ไข</Text>
                             </View>
-                            <ScrollView>
-                                {religion_maps.map((element, i) => (
-                                    <View key={i} style={{ flex: 1, flexDirection: 'row' }}>
-                                        <Text
+                            <ScrollView >
+                                {maps_data.map((element, i) => (
+                                    <View key={i} style={{
+                                        flex: 1,
+                                        flexDirection: 'row',
+                                        backgroundColor: '#d9d9ff',
+                                        justifyContent: 'space-around',
+                                        alignItems: "center",
+                                        padding: 5,
+                                        borderRadius: 10,
+                                        margin: 2,
+                                        height: 100
+
+                                    }}>
+                                        <View
                                             style={{
                                                 margin: 10,
-                                                width: '20%',
-                                                textAlign: 'center',
+                                                width: '35%',
                                             }}>
-                                            {element.Geo_map_name}
-                                        </Text>
-                                        <Text
+                                            <Text
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    height: 60
+                                                }}>
+                                                {element.Yn_name}
+                                            </Text>
+                                        </View>
+                                        <View
                                             style={{
                                                 margin: 10,
-                                                width: '20%',
-                                                textAlign: 'center',
+                                                width: '50%',
                                             }}>
-                                            {element.name_type}
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                margin: 10,
-                                                width: '20%',
-                                                textAlign: 'center',
-                                            }}>
-                                            {element.Informer_name}
-                                        </Text>
-                                        <View style={{ width: '20%', justifyContent: 'center', flexDirection: 'row' }}>
+                                            <Text
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    height: 60
+                                                }}>
+                                                {element.Yn_description}
+                                            </Text>
+
+                                        </View>
+
+                                        <View style={{ width: '15%', justifyContent: 'center', flexDirection: 'column', margin: 10, }}>
                                             <TouchableOpacity
-                                                onPress={this.onEdit.bind(this, element, element.Key,)}>
+                                                onPress={this.onEdit.bind(this, element)}>
                                                 <Image
                                                     source={require('../../assets/pencil.png')}
                                                     style={{ width: 25, height: 25, justifyContent: 'center', }}></Image>
@@ -272,8 +470,8 @@ export class Youthnetworkscreen extends Component {
                                 <Label>ชื่อ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Input
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
-                                // value={Geo_map_name}
-                                // onChangeText={str => this.setState({ Geo_map_name: str })}
+                                    value={Yn_name}
+                                    onChangeText={str => this.setState({ Yn_name: str })}
                                 />
                             </Item>
                             <Item fixedLabel>
@@ -281,27 +479,42 @@ export class Youthnetworkscreen extends Component {
                                 <Input
                                     keyboardType="numeric"
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
-                                // value={Geo_map_name}
-                                // onChangeText={str => this.setState({ Geo_map_name: str })}
+                                    value={Yn_phone_number}
+                                    onChangeText={str => this.setState({ Yn_phone_number: str })}
                                 />
                             </Item>
-                            <Item fixedLabel>
+                            <Item stackedLabel>
                                 <Label>รายละเอียด<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
-                                <Input
-                                    placeholder="รายละเอียด เกี่ยวกับองค์กร"
+                                <Textarea
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
-                                // value={Geo_map_name}
-                                // onChangeText={str => this.setState({ Geo_map_name: str })}
+                                    rowSpan={4}
+                                    value={Yn_description}
+                                    onChangeText={str =>
+                                        this.setState({ Yn_description: str })
+                                    }
+                                    placeholder="อธิบายรายละเอียด กิจกรรม การดำเนินงานขององค์กร"
                                 />
+
                             </Item>
                         </View>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            {isEmptyValues([map_image_uri]) === false ?
+                                <Image
+                                    source={{ uri: map_image_uri }}
+                                    style={{ height: 100, width: 100 }}></Image>
+                                : isEmptyValues([Map_image_URL]) === false ?
+                                    <Image
+                                        source={{ uri: Map_image_URL }}
+                                        style={{ height: 100, width: 100 }}></Image> : <></>
+                            }
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                             <Button
-                                success
+                                info
                                 style={{ margin: 10 }}
-                                onPress={this.onSubmit.bind(this)}>
-                                <Icon name="save" type="AntDesign" />
-                                <Text>บันทึก</Text>
+                                onPress={this._handleChoosePhoto}>
+                                <Icon name="plus" type="AntDesign" />
+                                <Text>เพิ่มรูปพื้นที่</Text>
                             </Button>
                             <Button
                                 danger
@@ -310,13 +523,36 @@ export class Youthnetworkscreen extends Component {
                                 <Icon name="left" type="AntDesign" />
                                 <Text>กลับ</Text>
                             </Button>
+
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                            <Button
+                                success
+                                style={{ margin: 10 }}
+                                onPress={this.onSubmit.bind(this)}>
+                                <Icon name="save" type="AntDesign" />
+                                <Text>บันทึก</Text>
+                            </Button>
                         </View>
                     </Content>
                 }
+                <Footer style={{ backgroundColor: '#ffffff' }}>
+                    <TouchableOpacity
+                        style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
+                        onPress={this.findCoordinates}>
+                        <Icon name="enviroment" type="AntDesign"></Icon>
+                        <Text>
+                            เลือกพิกัดที่อยู่ตอนนี้
+                          </Text>
+
+                    </TouchableOpacity>
+                </Footer>
                 <Footer style={mainStyle.footer}>
                     <TouchableOpacity
                         style={{ justifyContent: 'center' }}
-                        onPress={this.onCancel.bind(this)}>
+                        onPress={() =>
+                            this.setState({ step: 'map' })
+                        }>
                         <Image
                             source={require('../../assets/maps.png')}
                             style={{ width: 50, height: 50 }}></Image>
