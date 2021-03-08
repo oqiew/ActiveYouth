@@ -23,7 +23,6 @@ import PopulationMScreen from './screens/subdistrict/PopulationMScreen';
 import LocalCalendarScreen from './screens/localCalendar/LocalCalendarScreen';
 import LocalMapsScreen from './screens/localMaps/LocalMapsScreen';
 import ReligionScreen from './screens/religion/ReligionScreen';
-import MultimediaScreen from './screens/multimedia/Multimedia';
 import LocalOrganizationScreen from './screens/localOrganization/LocalOrganizationScreen';
 import UserListScreen from './screens/userList.js/UserListScreen';
 import SchoolScreen from './screens/school/SchoolScreen';
@@ -104,11 +103,7 @@ function App() {
                     component={SchoolScreen}
                     options={{ title: 'School', headerShown: false, }}
                 />
-                <Stack.Screen
-                    name={routeName.Multimedia}
-                    component={MultimediaScreen}
-                    options={{ title: 'Multimedia', headerShown: false, }}
-                />
+
                 <Stack.Screen
                     name={routeName.LocalOrganization}
                     component={LocalOrganizationScreen}

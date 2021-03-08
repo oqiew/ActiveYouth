@@ -36,7 +36,7 @@ export class ForgotPasswordScreen extends Component {
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="ลืมรหัสผ่าน" backHandler={this.onBackHandler}></HeaderAy>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={mainStyle.background}>
                     <View style={mainStyle.content}>
 
                         <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>กรอก Email ที่ท่านสมัครไว้</Text>

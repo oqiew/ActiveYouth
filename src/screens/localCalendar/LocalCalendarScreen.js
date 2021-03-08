@@ -12,58 +12,34 @@ import mainStyle from '../../styles/main.style';
 import { routeName } from '../../route/routeName';
 import HeaderAy from '../../components/header/HeaderAy';
 import themeStyle from '../../styles/theme.style';
-
-
+import { TableName } from '../../database/TableName';
+import Firestore from '@react-native-firebase/firestore'
+import { isEmptyValue } from '../../components/Method';
+const tbMain = Firestore().collection(TableName.Religions);
+const tbname = TableName.Religions;
 export class LocalCalendarScreen extends Component {
     constructor(props) {
         super(props);
-        // this.tbLocalCalendars = firestore().collection(TableName.Local_calendars);
-        // this.tbBans = firestore().collection(TableName.Bans)
-        //getl);
         this.state = {
             edit_ID: '',
             //data class
             dataCalendar1: [],
             dataCalendar2: [],
-            statusSave: "",
             Month1: "",
             Month2: "",
             mouth: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."],
             showMouth1: [],
             showMouth2: [],
             Name_activity: '',
-            ban: '',
-            selected_ban: {
-                Name: '',
-                ID: ''
-            },
-            query_bans: [],
-            bans: [],
             //getuser
-
             selected: 1,
             loading: false,
-
-            step: 'table'
-
-
+            step: 'table',
+            ...this.props.userReducer.profile,
+            Area: this.props.userReducer.area,
         }
     }
 
-
-    onListBans = (query) => {
-        const query_bans = [];
-        query.forEach(doc => {
-            query_bans.push({
-                ID: doc.id,
-                ...doc.data()
-            })
-        });
-        this.setState({
-            query_bans,
-            bans: query_bans
-        })
-    }
     onCollectionUpdate = (querySnapshot) => {
         const dataCalendar1 = [];
         const dataCalendar2 = [];
@@ -73,7 +49,7 @@ export class LocalCalendarScreen extends Component {
             const mn2 = parseInt(Month2, 10);
             if (Type_activity === 'เศรษฐกิจ') {
                 dataCalendar1.push({
-                    Key: doc.id,
+                    ID: doc.id,
                     Name_activity,
                     Month1: this.state.mouth[mn1 - 1],
                     Month2: this.state.mouth[mn2 - 1],
@@ -83,7 +59,7 @@ export class LocalCalendarScreen extends Component {
                 });
             } else {
                 dataCalendar2.push({
-                    Key: doc.id,
+                    ID: doc.id,
                     Name_activity,
                     Month1: this.state.mouth[mn1 - 1],
                     Month2: this.state.mouth[mn2 - 1],
@@ -100,47 +76,35 @@ export class LocalCalendarScreen extends Component {
     }
 
     delete(id) {
-        // this.tbLocalCalendars.doc(id).delete().then(() => {
-        //     console.log("Document successfully deleted!");
-
-        // }).catch((error) => {
-        //     console.error("Error removing document: ", error);
-        // });
+        tbMain.doc(id).delete().then(() => {
+            console.log("Document successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
     }
     edit(data) {
-        // this.setState({ loading: true });
-        // const { Name_activity, Type_activity } = data;
-        // const { mouth } = this.state;
-        // const Month1 = parseInt(data.Month1db, 10);
-        // const Month2 = parseInt(data.Month2db, 10);
-        // const showMouth2 = [];
-        // for (let index = Month1; index <= 12; index++) {
-        //     showMouth2.push(<Picker.Item key={index} label={mouth[index - 1] + ""} value={index} />)
-        // }
-        // this.setState({
-        //     Name_activity, Month1, Month2, Type_activity, edit_ID: data.Key, selected: 3, loading: false, showMouth2
-        // })
+        this.setState({ loading: true });
+        const { Name_activity, Type_activity } = data;
+        const { mouth } = this.state;
+        const Month1 = parseInt(data.Month1db, 10);
+        const Month2 = parseInt(data.Month2db, 10);
+        const showMouth2 = [];
+        for (let index = Month1; index <= 12; index++) {
+            showMouth2.push(<Picker.Item key={index} label={mouth[index - 1] + ""} value={index} />)
+        }
+        console.log(data)
+        this.setState({
+            Name_activity, Month1, Month2, Type_activity, edit_ID: data.ID, loading: false, showMouth2, step: 'add'
+        })
     }
     cancelEdit = (e) => {
         this.setState({
-            Name_activity: '', Month1: '', Month2: '', Type_activity: '', edit_ID: '', selected: 2
+            Name_activity: '', Month1: '', Month2: '', Type_activity: '', edit_ID: '',
         })
     }
     componentDidMount() {
-        this.authListener();
-    }
-    authListener() {
-        //     if (isEmptyValue(this.state.uid)) {
-        //         this.props.navigation.navigate(routeName.Home);
-        //     } else {
-        //         if (!isEmptyValue(this.state.selected_ban.ID)) {
-        //             this.unsubscribe = this.tbLocalCalendars
-        //                 .where('Ban_ID', '==', this.state.selected_ban.ID)
-        //                 .onSnapshot(this.onCollectionUpdate);
-        //         }
+        tbMain.onSnapshot(this.onCollectionUpdate)
         this.genrateMonth(0, 0);
-        //         this.tbBans.onSnapshot(this.onListBans)
-        //     }
     }
     genrateMonth(str, d) {
 
@@ -177,84 +141,82 @@ export class LocalCalendarScreen extends Component {
     }
     onSubmit = e => {
         e.preventDefault()
-        // this.setState({ loading: true });
-        // const { Name_activity, Month1, Month2, uid, Type_activity, Name, edit_ID,
-        //     Area_ID, selected_ban
-        // } = this.state;
-        // if (!isEmptyValue(selected_ban.ID)) {
-        //     if (Name_activity === '' || Month1 === '' || Month2 === '' || Type_activity === '') {
-        //         this.setState({
-        //             loading: false
-        //         });
-        //         Alert.alert("กรุณากรอกข้อมูลให้ครบ");
-        //     } else {
-        //         if (!isEmptyValue(edit_ID)) {
-        //             this.tbLocalCalendars.doc(edit_ID).set({
-        //                 Name_activity, Type_activity
-        //                 , Month1, Month2, Informer_ID: uid, Informer_name: Name
-        //                 , Ban_ID: this.state.selected_ban.ID,
-        //             }).then((docRef) => {
-        //                 this.setState({
-        //                     Name_activity: "", Month1: "", Month2: "", Type_activity: '',
-        //                     selected: 2, edit_ID: '', loading: false
-        //                 });
-        //                 Alert.alert("บันทึกข้อมูลสำเร็จ");
+        this.setState({ loading: true });
+        const { Name_activity, Month1, Month2, uid, Type_activity, Name, edit_ID,
+            Area_ID } = this.state;
 
-        //             }).catch((error) => {
-        //                 this.setState({
-        //                     loading: false
-        //                 });
-        //                 Alert.alert("บันทึกข้อมูลไม่สำเร็จ");
-        //                 console.error("Error adding document: ", error);
-        //             });
+        if (Name_activity === '' || Month1 === '' || Month2 === '' || Type_activity === '') {
+            this.setState({
+                loading: false
+            });
+            Alert.alert("กรุณากรอกข้อมูลให้ครบ");
+        } else {
+            if (!isEmptyValue(edit_ID)) {
+                tbMain.doc(edit_ID).set({
+                    Area_ID: this.state.Area.ID,
+                    Update_by_ID: this.state.uid,
+                    Update_date: Firestore.Timestamp.now(),
+                    Name_activity, Type_activity
+                    , Month1, Month2,
+                }).then((docRef) => {
+                    this.setState({
+                        Name_activity: "", Month1: "", Month2: "", Type_activity: '',
+                        edit_ID: '', loading: false
+                    });
+                    Alert.alert("บันทึกข้อมูลสำเร็จ");
 
-        //         } else {
-        //             this.tbLocalCalendars.add({
-        //                 Name_activity, Type_activity, Create_date: firestore.Timestamp.now()
-        //                 , Month1, Month2, Informer_ID: uid, Informer_name: Name
-        //                 , Area_ID, Ban_ID: this.state.selected_ban.ID,
-        //             }).then((docRef) => {
-        //                 this.setState({
-        //                     Name_activity: "", Month1: "", Month2: "", Type_activity: '',
-        //                     selected: 2, loading: false
-        //                 });
-        //                 Alert.alert("บันทึกข้อมูลสำเร็จ");
+                }).catch((error) => {
+                    this.setState({
+                        loading: false
+                    });
+                    Alert.alert("บันทึกข้อมูลไม่สำเร็จ");
+                    console.error("Error adding document: ", error);
+                });
 
-        //             }).catch((error) => {
-        //                 this.setState({
-        //                     loading: false
-        //                 });
-        //                 Alert.alert("บันทึกข้อมูลไม่สำเร็จ");
-        //                 console.error("Error adding document: ", error);
-        //             });
+            } else {
+                tbMain.add({
+                    Area_ID: this.state.Area.ID,
+                    Update_by_ID: this.state.uid,
+                    Create_date: Firestore.Timestamp.now(),
+                    Update_date: Firestore.Timestamp.now(),
+                    Name_activity, Type_activity
+                    , Month1, Month2,
+                }).then((docRef) => {
+                    this.setState({
+                        Name_activity: "", Month1: "", Month2: "", Type_activity: '',
+                        edit_ID: '', loading: false
+                    });
+                    Alert.alert("บันทึกข้อมูลสำเร็จ");
 
-        //         }
-        //     }
-        // } else {
-        //     console.log('ban null')
-        //     this.setState({
-        //         loading: false
-        //     });
-        // }
+                }).catch((error) => {
+                    this.setState({
+                        loading: false
+                    });
+                    Alert.alert("บันทึกข้อมูลไม่สำเร็จ");
+                    console.error("Error adding document: ", error);
+                });
 
+            }
+        }
 
     }
-
-
     onBackHandler = () => {
         this.props.navigation.goBack()
     }
     render() {
-        const { Month1, Month2, Name_activity, Type_activity, ban, bans, selected_ban } = this.state;
+        const { Month1, Month2, Name_activity, Type_activity, } = this.state;
         const { step } = this.state;
         return (
             <Container style={{ backgroundColor: themeStyle.background }}>
                 <HeaderAy name="ปฏิทินชุมชน" backHandler={this.onBackHandler}></HeaderAy>
                 <Loading visible={this.state.loading}></Loading>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={{
+                    padding: 15,
+                    backgroundColor: '#f0f2f5',
+                }}>
                     {step === 'table' &&
                         <>
-                            <View style={{ flex: 1, flexDirection: 'row', borderBottomWidth: 1 }}>
+                            <View style={{ flex: 1, flexDirection: 'row', borderBottomWidth: 1, top: 0 }}>
                                 <Text style={{ fontWeight: 'bold', margin: 10, width: '35%', textAlign: 'center' }}>รายการ</Text>
                                 <Text style={{ fontWeight: 'bold', margin: 10, width: '25%', textAlign: 'center' }}>ช่วงเวลา</Text>
                                 <Text style={{ fontWeight: 'bold', margin: 10, width: '20%', textAlign: 'center' }}>แก้ไข</Text>
@@ -270,7 +232,7 @@ export class LocalCalendarScreen extends Component {
                                         <TouchableOpacity onPress={this.edit.bind(this, element)}>
                                             <Image source={require('../../assets/pencil.png')} style={{ width: 25, height: 25, justifyContent: 'center' }}></Image>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={this.delete.bind(this, element.Key)}>
+                                        <TouchableOpacity onPress={this.delete.bind(this, element.ID)}>
                                             <Image source={require('../../assets/trash_can.png')} style={{ width: 25, height: 25, justifyContent: 'center' }}></Image>
                                         </TouchableOpacity>
                                     </View>
@@ -291,7 +253,7 @@ export class LocalCalendarScreen extends Component {
                                         <TouchableOpacity onPress={this.edit.bind(this, element)}>
                                             <Image source={require('../../assets/pencil.png')} style={{ width: 25, height: 25, justifyContent: 'center' }}></Image>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={this.delete.bind(this, element.Key)}>
+                                        <TouchableOpacity onPress={this.delete.bind(this, element.ID)}>
                                             <Image source={require('../../assets/trash_can.png')} style={{ width: 25, height: 25, justifyContent: 'center' }}></Image>
                                         </TouchableOpacity>
                                     </View>
@@ -310,8 +272,8 @@ export class LocalCalendarScreen extends Component {
                             <Item fixedLabel >
                                 <Label>ประเภท</Label>
                                 <Picker
-                                // selectedValue={Type_activity}
-                                // onValueChange={str => this.setState({ Type_activity: str })}
+                                    selectedValue={Type_activity}
+                                    onValueChange={str => this.setState({ Type_activity: str })}
                                 >
                                     <Picker.Item key="0" label="เลือกประเภทกิจกรรม" value="" />
                                     <Picker.Item key="1" label="วัฒนธรรมประเพณี" value="วัฒนธรรมประเพณี" />

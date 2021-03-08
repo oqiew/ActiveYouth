@@ -9,7 +9,6 @@ export const routeName = {
     PopulationF: 'PopulationF',
     Religion: 'Religion',
     School: 'School',
-    Multimedia: 'Muntimedia',
     LocalOrganization: 'LocalOrganization',
     YouthNetwork: 'YouthNetwork',
     LocalMaps: 'LocalMaps',

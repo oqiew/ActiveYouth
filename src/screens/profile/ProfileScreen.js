@@ -56,7 +56,7 @@ export class ProfileScreen extends Component {
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="โปรไฟล์" backHandler={this.onBackHandler}></HeaderAy>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={mainStyle.background}>
 
                     <View style={{
                         flex: 1,
@@ -70,8 +70,8 @@ export class ProfileScreen extends Component {
                                 source={require('../../assets/user.png')}
                                 style={mainStyle.avatar}></Image>
                         ) : (
-                                <Image source={{ uri: Avatar_URL }} style={mainStyle.avatar}></Image>
-                            )}
+                            <Image source={{ uri: Avatar_URL }} style={mainStyle.avatar}></Image>
+                        )}
 
                         <View style={{ marginTop: 10, flex: 1 }}>
                             <View style={{ flexDirection: 'row' }}>

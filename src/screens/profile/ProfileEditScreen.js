@@ -188,7 +188,7 @@ export class ProfileEditScreen extends Component {
             <Container style={{ backgroundColor: themeStyle.background }}>
                 <HeaderAy name="โปรไฟล์" backHandler={this.onBack}></HeaderAy>
                 <Loading visible={this.state.loading}></Loading>
-                <Content contentContainerStyle={{ padding: 15 }}>
+                <Content contentContainerStyle={mainStyle.background}>
                     <View tyle={{ marginBottom: 10 }}>
                         {isEmptyValues([avatar_uri]) === false ?
                             <TouchableOpacity onPress={this._handleChoosePhoto} style={{ marginBottom: 20, alignItems: 'center' }}>
