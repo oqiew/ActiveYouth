@@ -504,7 +504,7 @@ export class SchoolScreen extends Component {
                                     onChangeText={str =>
                                         this.setState({ School_activity: str })
                                     }
-                                    placeholder="กิจกรรมที่สำคัญของฌรงเรียน มีการจัดกิจกรรมอะไรบ้าง "
+                                    placeholder="กิจกรรมที่สำคัญของโรงเรียน มีการจัดกิจกรรมอะไรบ้าง "
                                 />
                             </Item>
                             <Item stackedLabel>

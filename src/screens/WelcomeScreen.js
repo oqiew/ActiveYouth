@@ -11,7 +11,7 @@ import mainStyle from '../styles/main.style';
 import { routeName } from '../route/routeName';
 import Auth from '@react-native-firebase/auth';
 import Firestore from '@react-native-firebase/firestore'
-import { isEmptyValues } from '../components/Method';
+import { isEmptyValue, isEmptyValues } from '../components/Method';
 import { TableName } from '../database/TableName';
 export class WelcomeScreen extends Component {
     constructor(props) {
@@ -27,29 +27,50 @@ export class WelcomeScreen extends Component {
         this.tbArea = Firestore().collection(TableName.Areas);
 
     }
+    getArea = async (id) => {
+        return new Promise((resolve, reject) => {
+            try {
+                this.tbArea.doc(id).get().then((doc) => {
+                    let area = { ID: doc.id, ...doc.data() }
+
+                    resolve(area)
+                }).catch((error) => {
+                    console.log('reject alert', error)
+                    reject('')
+                })
+
+            } catch (error) {
+                console.log('reject alert', error)
+                reject('')
+            }
+        })
+    }
     componentDidMount() {
         this.setState({
             loading: true
         })
         this._unsubscribe = this.props.navigation.addListener('focus', () => {
-            Auth().onAuthStateChanged((user) => {
-                if (user) {
-                    this.tbUser.doc(user.uid).get().then((doc) => {
 
+            Auth().onAuthStateChanged((user) => {
+
+                if (!isEmptyValue(user)) {
+                    this.tbUser.doc(user.uid).get().then(async (doc) => {
                         if (doc.exists) {
                             this.props.addProfile({ uid: user.uid, email: user.email, ...doc.data() })
-                            this.tbArea.doc(doc.data().Area_ID).get().then((doc2) => {
-                                if (doc2.exists) {
-                                    this.props.setArea({ ID: doc2.id, ...doc2.data() })
-                                    this.setState({
-                                        loading: false
-                                    })
-                                    console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
-                                    this.props.navigation.navigate(routeName.Home)
-                                }
-                            })
+                            if (!isEmptyValue(doc.data().Area_ID)) {
 
-                        } else {
+                                const area = await this.getArea(doc.data().Area_ID);
+                                if (!isEmptyValue(area)) {
+                                    this.props.setArea({ ID: area.ID, ...area })
+                                }
+                            }
+                            this.setState({
+                                loading: false
+                            })
+                            this.props.navigation.navigate(routeName.Home)
+                            console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
+                        }
+                        else {
                             this.props.addProfile({ uid: user.uid, email: user.email })
                             this.setState({
                                 loading: false
@@ -63,7 +84,7 @@ export class WelcomeScreen extends Component {
                         this.setState({
                             loading: false
                         })
-                        console.log('error home set user no profile', user.uid, user.email)
+                        console.log('error home set user no profile', user.uid, user.email, error)
                         this.props.navigation.navigate(routeName.ProfileEdit)
                     })
                 } else {

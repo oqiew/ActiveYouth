@@ -76,18 +76,32 @@ export class HomeScreen extends Component {
     }
 
     onSelectedArea(Area) {
-        this.tbUser.doc(this.state.uid).update({
-            User_type: 'ay',
-            Area_ID: Area.ID
-        }).then(() => {
-            this.props.setArea({ Area })
-            this.setState({
-                Area,
-                select_area: false
+        const { User_type } = this.state;
+        if (User_type === 'admin') {
+            this.tbUser.doc(this.state.uid).update({
+                Area_ID: Area.ID
+            }).then(() => {
+                this.props.setArea({ Area })
+                this.setState({
+                    Area, select_area: false
+                })
+            }).catch((error) => {
+                console.log('error update area', error)
             })
-        }).catch((error) => {
-            console.log('error update area', error)
-        })
+        } else {
+            this.tbUser.doc(this.state.uid).update({
+                User_type: 'ay',
+                Area_ID: Area.ID
+            }).then(() => {
+                this.props.setArea({ Area })
+                this.setState({
+                    Area, select_area: false
+                })
+            }).catch((error) => {
+                console.log('error update area', error)
+            })
+        }
+
 
     }
     render() {
@@ -137,16 +151,6 @@ export class HomeScreen extends Component {
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={{ alignItems: 'center', padding: 2, height: 120 }}
-                                        onPress={() => this.props.navigation.navigate(routeName.Multimedia)}
-                                    >
-                                        <Image
-                                            source={require('../assets/main/video.png')}
-                                            style={{ width: 75, height: 75 }}></Image>
-                                        <Text style={{ fontSize: 16, textAlign: 'center' }}>
-                                            สื่อ</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={{ alignItems: 'center', padding: 2, height: 120 }}
                                         onPress={() => this.props.navigation.navigate(routeName.LocalMaps)}
                                     >
                                         <Image
@@ -157,13 +161,13 @@ export class HomeScreen extends Component {
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={{ alignItems: 'center', padding: 2, height: 120 }}
-                                        onPress={() => this.props.navigation.navigate(routeName.Dashboard)}
+                                        onPress={() => this.props.navigation.navigate(routeName.AY)}
                                     >
                                         <Image
-                                            source={require('../assets/report.png')}
+                                            source={require('../assets/user.png')}
                                             style={{ width: 75, height: 75 }}></Image>
                                         <Text style={{ fontSize: 16, textAlign: 'center' }}>
-                                            สรุป</Text>
+                                            AY</Text>
                                     </TouchableOpacity>
                                 </Col>
                                 <Col style={{ height: '100%', padding: 5 }}>
@@ -219,15 +223,16 @@ export class HomeScreen extends Component {
                                         <Text style={{ fontSize: 16, textAlign: 'center' }}>
                                             เครือข่าย</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity
+
+                                    < TouchableOpacity
                                         style={{ alignItems: 'center', padding: 2, height: 120 }}
-                                        onPress={() => this.props.navigation.navigate(routeName.AY)}
+                                        onPress={() => this.props.navigation.navigate(routeName.Dashboard)}
                                     >
                                         <Image
-                                            source={require('../assets/user.png')}
+                                            source={require('../assets/report.png')}
                                             style={{ width: 75, height: 75 }}></Image>
                                         <Text style={{ fontSize: 16, textAlign: 'center' }}>
-                                            AY</Text>
+                                            สรุป</Text>
                                     </TouchableOpacity>
                                 </Col>
                             </Grid>

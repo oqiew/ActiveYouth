@@ -5,6 +5,7 @@ import mainStyle from '../../styles/main.style'
 import themeStyle from '../../styles/theme.style'
 import { View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button } from 'native-base';
+import Auth from '@react-native-firebase/auth'
 export class ForgotPasswordScreen extends Component {
     constructor(props) {
         super(props);
@@ -14,10 +15,9 @@ export class ForgotPasswordScreen extends Component {
         }
     }
     onResetPassword() {
-        e.preventDefault();
-        auth().sendPasswordResetEmail(this.state.Email)
+        Auth().sendPasswordResetEmail(this.state.Email)
             .then((doc) => {
-                Alert.alert("กรุณาเช็คอีเมลของท่าน");
+                Alert.alert("ส่งการรีเซ็ตรหัสผ่านสำเร็จ กรุณาเช็คอีเมลของท่าน");
             })
             .catch(error => {
                 Alert.alert("ตั้งรหัสผ่านใหม่ไม่สำเร็จ กรุณากรอกข้อมูลอีเมลให้ถูกต้อง");

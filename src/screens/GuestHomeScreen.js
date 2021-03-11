@@ -14,13 +14,7 @@ export class GuestHomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
-            ...this.props.userReducer.profile,
-            subdistricts: [],
-            query_subdistricts: [],
-            subdistrict: '',
-            current_page: ''
-
+            loading: false
         }
     }
 
@@ -30,19 +24,18 @@ export class GuestHomeScreen extends Component {
 
     render() {
         const { loading } = this.state;
-        const { Subdistrict, subdistricts, subdistrict } = this.state;
+
         return (
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="หน้าหลัก" backHandler={this.onBackHandler}></HeaderAy>
                 <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>
                     <View style={mainStyle.content}>
-                        <Text>{Subdistrict}</Text>
                         <Grid>
                             <Col style={{ height: '100%', padding: 5 }}>
                                 <TouchableOpacity
                                     style={{ alignItems: 'center', padding: 2, height: 120 }}
-                                    onPress={() => this.props.navigation.navigate(routeName.Dashboard)}
+                                    onPress={() => this.props.navigation.navigate(routeName.DashboardGust)}
                                 >
                                     <Image
                                         source={require('../assets/report.png')}

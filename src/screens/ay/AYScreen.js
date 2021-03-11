@@ -592,13 +592,18 @@ export class AYScreen extends Component {
                                     placeholder="แนวคิดและรูปแบบการเลี้ยงลูก"
                                 />
                             </Item>
-                            <Item fixedLabel>
+                            <Item stackedLabel>
                                 <Label>อาชีพของครอบครัว<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
-                                <Input
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                <Textarea
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, minWidth: '100%' }}
+                                    rowSpan={4}
                                     value={Y_family_career}
-                                    onChangeText={str => this.setState({ Y_family_career: str })}
+                                    onChangeText={str =>
+                                        this.setState({ Y_family_career: str })
+                                    }
+                                    placeholder="ลักษณะการทำอาชีพของครอบครัว หรือ ผู้ปกครอง"
                                 />
+
                             </Item>
                             <Item fixedLabel>
                                 <Label>สถานะของครอบครัว<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
@@ -630,7 +635,7 @@ export class AYScreen extends Component {
                                     onChangeText={str =>
                                         this.setState({ Y_alcohol: str })
                                     }
-                                    placeholder="จำนวนคนในครอบครัวที่ดื่มสุรา"
+                                    placeholder="คนในครอบครัวที่ดื่มสุรา เป็นใคร ดื่มบ่อยแค่ไหน อย่างไร"
                                 />
 
                             </Item>
@@ -643,7 +648,7 @@ export class AYScreen extends Component {
                                     onChangeText={str =>
                                         this.setState({ Y_cigarette: str })
                                     }
-                                    placeholder="จำนวนคนในครอบครัวที่สูบบุหรี่"
+                                    placeholder="คนในครอบครัวที่สูบบุหรี่ เป็นใคร สูบบ่อยแครไหน อย่างไร"
                                 />
 
                             </Item>
@@ -656,7 +661,7 @@ export class AYScreen extends Component {
                                     onChangeText={str =>
                                         this.setState({ Y_alcohol_cigarette: str })
                                     }
-                                    placeholder="จำนวนคนในครอบครัวที่ทั้งสูบบุหรี่และดื่มสุรา"
+                                    placeholder="คนในครอบครัวที่ทั้งสูบบุหรี่และดื่มสุรา บ่อยแค่ไหน อย่างไร"
                                 />
                             </Item>
 

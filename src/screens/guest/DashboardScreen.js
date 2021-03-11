@@ -3,12 +3,7 @@ import { View, Image, TouchableOpacity, Alert, Platform, StyleSheet, ScrollView 
 import {
     Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Textarea, Picker, Body, Title, Header
 } from 'native-base';
-import { connect } from 'react-redux';
-import { addProfile } from '../../redux/Reducer';
 import Loading from '../../components/Loading';
-import ImagePicker from 'react-native-image-picker'
-import ImageResizer from 'react-native-image-resizer'
-import upload from '../../assets/upload.png'
 import mainStyle from '../../styles/main.style';
 import { routeName } from '../../route/routeName';
 import HeaderAy from '../../components/header/HeaderAy';
@@ -47,8 +42,7 @@ export class DashboardScreen extends Component {
             position: { lat: 15.229399, lng: 104.857126 },
             position2: { lat: 15.229399, lng: 104.857126 },
             religion_maps: [],
-            ...this.props.userReducer.profile,
-            Area: this.props.userReducer.area,
+
 
             // data map
             query_areas: [],
@@ -423,9 +417,7 @@ export class DashboardScreen extends Component {
             query_areas
         })
     }
-    onCancel() {
 
-    }
     onBackHandler = () => {
         this.props.navigation.goBack()
     }
@@ -725,14 +717,4 @@ export class DashboardScreen extends Component {
     }
 }
 
-
-const mapStateToProps = state => ({
-    userReducer: state.userReducer,
-});
-
-//used to action (dispatch) in to props
-const mapDispatchToProps = {
-    addProfile,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardScreen);
+export default (DashboardScreen);

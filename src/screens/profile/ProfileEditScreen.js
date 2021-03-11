@@ -15,6 +15,7 @@ import themeStyle from '../../styles/theme.style';
 import Loading from '../../components/Loading';
 import { TableName } from '../../database/TableName';
 import { routeName } from '../../route/routeName';
+import mainStyle from '../../styles/main.style';
 
 const style_private = StyleSheet.create({
     image: {
@@ -113,14 +114,14 @@ export class ProfileEditScreen extends Component {
                     if (this.state.newProfile) {
                         console.log('new profile')
                         this.tbUser.doc(uid).set({
-                            Name, Lastname, Nickname, Sex, Phone_number, User_type, Email: email, Birthday_format,
-                            Line_ID, Facebook, Birthday, Area_ID, Avatar_URL: temp_Avatar_URL,
+                            Name, Lastname, Nickname, Sex, Phone_number, User_type: '', Email: email, Birthday_format,
+                            Line_ID, Facebook, Birthday, Area_ID: '', Avatar_URL: temp_Avatar_URL,
                             Update_date: firestore.Timestamp.now(), Create_date: firestore.Timestamp.now()
                         }).then((success) => {
                             Alert.alert("บันทึกข้อมูลสำเร็จ")
                             this.props.addProfile({
-                                uid, email, avatar_uri, Name, Lastname, Nickname, Sex, Phone_number, User_type,
-                                Line_ID, Facebook, Birthday, Area_ID, Avatar_URL: temp_Avatar_URL, Birthday_format,
+                                uid, email, avatar_uri, Name, Lastname, Nickname, Sex, Phone_number, User_type: '',
+                                Line_ID, Facebook, Birthday, Area_ID: '', Avatar_URL: temp_Avatar_URL, Birthday_format,
                             });
                             this.setState({
                                 loading: false

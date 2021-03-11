@@ -18,6 +18,7 @@ export const routeName = {
     ProfileEdit: 'ProfileEdit',
     AY: 'AY',
     Dashboard: 'Dashboard',
+    DashboardGust: 'DashboardGust',
     GuestHome: 'GuestHome'
 
 }

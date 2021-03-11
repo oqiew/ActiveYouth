@@ -18,8 +18,8 @@ export class SigninScreen extends Component {
         this.tbArea = Firestore().collection(TableName.Areas);
         this.state = {
             loading: false,
-            Email: 'asoyergas@gmail.com',
-            Password: '12345678',
+            Email: '',
+            Password: '',
             pass: true,
             icon: 'eye-with-line',
         }

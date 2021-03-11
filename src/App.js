@@ -30,8 +30,10 @@ import ProfileScreen from './screens/profile/ProfileScreen';
 import Youthnetworkscreen from './screens/youthNetwork/Youthnetworkscreen';
 import AYScreen from './screens/ay/AYScreen';
 import DashboardScreen from './screens/dashboard/DashboardScreen';
+import DashboardGuestScreen from './screens/guest/DashboardScreen';
 import GuestHomeScreen from './screens/GuestHomeScreen';
 import ProfileEditScreen from './screens/profile/ProfileEditScreen';
+
 
 
 const Stack = createStackNavigator();
@@ -148,6 +150,11 @@ function App() {
                     name={routeName.Dashboard}
                     component={DashboardScreen}
                     options={{ title: 'Dashboard', headerShown: false, }}
+                />
+                <Stack.Screen
+                    name={routeName.DashboardGust}
+                    component={DashboardGuestScreen}
+                    options={{ title: 'DashboardGust', headerShown: false, }}
                 />
 
             </Stack.Navigator>

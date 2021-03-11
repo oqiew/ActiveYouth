@@ -47,7 +47,7 @@ export class LocalOrganizationScreen extends Component {
             Lgo_officer: '',
             Lgo_position_youth: '',
             Lgo_policy_youth: '',
-            Lgo_activity_protec: '',
+            Lgo_activity_protect: '',
             Lgo_activity: '',
         }
     }
@@ -68,7 +68,7 @@ export class LocalOrganizationScreen extends Component {
             const {
                 Map_image_URL, Position,
                 Lgo_name, Lgo_type, Lgo_position_youth, Lgo_officer,
-                Lgo_policy_youth, Lgo_activity_protec, Lgo_activity
+                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity
             } = doc.data();
             if (!isEmptyValue(Position)) {
                 maps_marker.push(
@@ -204,7 +204,7 @@ export class LocalOrganizationScreen extends Component {
         try {
             const { map_image_uri, Map_image_URL, new_upload_image, Map_image_name, position } = this.state;
             const { Lgo_name, Lgo_type, Lgo_position_youth, Lgo_officer,
-                Lgo_policy_youth, Lgo_activity_protec, Lgo_activity } = this.state;
+                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity } = this.state;
             let temp_image_URL = "";
             let new_id = '';
             if (!isEmptyValue(this.state.edit_ID)) {
@@ -223,7 +223,7 @@ export class LocalOrganizationScreen extends Component {
                     !isEmptyValue(Lgo_type) &&
                     !isEmptyValue(Lgo_position_youth) &&
                     !isEmptyValue(Lgo_policy_youth) &&
-                    !isEmptyValue(Lgo_activity_protec) &&
+                    !isEmptyValue(Lgo_activity_protect) &&
                     !isEmptyValue(Lgo_officer) &&
                     !isEmptyValue(Lgo_activity)
                 ) {
@@ -242,7 +242,7 @@ export class LocalOrganizationScreen extends Component {
                                 Map_image_name: new_id,
                                 Position: position,
                                 Lgo_name, Lgo_type, Lgo_position_youth,
-                                Lgo_policy_youth, Lgo_activity_protec, Lgo_activity, Lgo_officer
+                                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, Lgo_officer
 
                             })
                             .then(result => {
@@ -269,7 +269,7 @@ export class LocalOrganizationScreen extends Component {
                                 Map_image_name: new_id,
                                 Position: position,
                                 Lgo_name, Lgo_type, Lgo_position_youth,
-                                Lgo_policy_youth, Lgo_activity_protec, Lgo_activity, Lgo_officer
+                                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, Lgo_officer
                             })
                             .then(result => {
                                 Alert.alert('อัพเดตสำเร็จ');
@@ -314,7 +314,7 @@ export class LocalOrganizationScreen extends Component {
             Lgo_officer: '',
             Lgo_position_youth: '',
             Lgo_policy_youth: '',
-            Lgo_activity_protec: '',
+            Lgo_activity_protect: '',
             Lgo_activity: '',
         })
     }
@@ -332,7 +332,7 @@ export class LocalOrganizationScreen extends Component {
             Lgo_type: data.Lgo_type,
             Lgo_position_youth: data.Lgo_position_youth,
             Lgo_policy_youth: data.Lgo_policy_youth,
-            Lgo_activity_protec: data.Lgo_activity_protec,
+            Lgo_activity_protect: data.Lgo_activity_protect,
             Lgo_activity: data.Lgo_activity,
             Lgo_officer: data.Lgo_officer,
 
@@ -358,7 +358,7 @@ export class LocalOrganizationScreen extends Component {
     render() {
         const { loading, step, maps_data, map_image_uri, Map_image_URL } = this.state;
         const { Lgo_name, Lgo_type, Lgo_position_youth, Lgo_officer,
-            Lgo_policy_youth, Lgo_activity_protec, Lgo_activity } = this.state;
+            Lgo_policy_youth, Lgo_activity_protect, Lgo_activity } = this.state;
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -543,9 +543,9 @@ export class LocalOrganizationScreen extends Component {
                                 <Textarea
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     rowSpan={4}
-                                    value={Lgo_activity_protec}
+                                    value={Lgo_activity_protect}
                                     onChangeText={str =>
-                                        this.setState({ Lgo_activity_protec: str })
+                                        this.setState({ Lgo_activity_protect: str })
                                     }
                                     placeholder="กิจกรรมหรือแนวทางการส่งเสริมการปกป้องและคุ้มครองประชาชนด้านสุขภาพแบบองค์รวมที่ผ่านมาของ อปท."
                                 />
