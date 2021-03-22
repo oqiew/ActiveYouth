@@ -18,6 +18,8 @@ export class SigninScreen extends Component {
         this.tbArea = Firestore().collection(TableName.Areas);
         this.state = {
             loading: false,
+            // Email: 'asoyergas@gmail.com',
+            // Password: '12345678',
             Email: '',
             Password: '',
             pass: true,
@@ -88,15 +90,9 @@ export class SigninScreen extends Component {
                 Alert.alert("can not login", msgError.message);
             });
         const query_user = (user) => {
-            var uid = '';
-            var email = '';
-            if (Platform.OS === 'ios') {
-                uid = user.uid;
-                email = user.email;
-            } else {
-                uid = user.user.uid;
-                email = user.user.email;
-            }
+            var uid = user.user.uid;
+            var email = user.user.email;
+
             this.tbUser.doc(uid).get().then((doc) => {
                 console.log(doc.data())
                 if (doc.exists) {
@@ -155,7 +151,7 @@ export class SigninScreen extends Component {
                 <Content contentContainerStyle={[mainStyle.background, { height: '100%' }]}>
                     <View style={mainStyle.content}>
 
-                        <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>สมัครสมาชิก</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>เข้าสู่ระบบ</Text>
                         <Item floatingLabel style={{ marginTop: 10 }}>
                             <Icon active name='mail' type="AntDesign"></Icon>
                             <Label>email</Label>

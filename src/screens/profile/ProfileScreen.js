@@ -59,11 +59,8 @@ export class ProfileScreen extends Component {
                 <Content contentContainerStyle={mainStyle.background}>
 
                     <View style={{
-                        flex: 1,
                         flexDirection: 'column',
-                        justifyContent: 'center',
                         alignItems: 'center',
-                        alignContent: 'center',
                     }}>
                         {Avatar_URL === '' ? (
                             <Image

@@ -91,7 +91,7 @@ export class DashboardScreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        // image={icon_m}
+                        image={government}
                         icon={government}
                     // label={count}
                     >
@@ -163,7 +163,7 @@ export class DashboardScreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        // image={icon_m}
+                        image={iconm}
                         icon={iconm}
                     // label={count}
                     >
@@ -217,7 +217,7 @@ export class DashboardScreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        // image={icon_m}
+                        image={user}
                         icon={user}
                     // label={count}
                     >
@@ -270,7 +270,7 @@ export class DashboardScreen extends Component {
                             longitude: Position.lng,
                         }}
 
-                        // image={icon_m}
+                        image={temple}
                         icon={temple}
                     // label={count}
                     >
@@ -324,7 +324,7 @@ export class DashboardScreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        // image={icon_m}
+                        image={user_network}
                         icon={user_network}
                     // label={count}
                     >
@@ -376,7 +376,7 @@ export class DashboardScreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        // image={icon_m}
+                        image={school}
                         icon={school}
                     // label={count}
                     >
@@ -440,12 +440,17 @@ export class DashboardScreen extends Component {
         };
     }
     onMapPress = e => {
-        this.setState({
-            position: {
-                lat: e.nativeEvent.coordinate.latitude,
-                lng: e.nativeEvent.coordinate.longitude,
-            },
-        });
+        try {
+            this.setState({
+                position: {
+                    lat: e.nativeEvent.coordinate.latitude,
+                    lng: e.nativeEvent.coordinate.longitude,
+                },
+            });
+        } catch (error) {
+            console.log(e, error)
+        }
+
     };
 
     findCoordinates = () => {

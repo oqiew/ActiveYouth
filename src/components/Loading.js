@@ -13,7 +13,6 @@ const Loading = ({ visible }) => {
             textContent={'loading'}
             textStyle={{
                 color: Theme.Color_green,
-                fontFamily: 'SukhumvitSet-SemiBold',
                 fontSize: 32, fontWeight: 'normal'
             }} />
     )

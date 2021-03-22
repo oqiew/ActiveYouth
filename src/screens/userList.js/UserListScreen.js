@@ -31,7 +31,7 @@ export class UserListScreen extends Component {
             showingInfoWindow: false,
             position: { lat: 15.229399, lng: 104.857126 },
             position2: { lat: 15.229399, lng: 104.857126 },
-            step: 'reject',
+            step: isEmptyValue(this.props.userReducer.profile.uid) ? 'accept' : 'reject',
             religion_maps: [],
             religion_uri: '',
             Religion_URL: '',
@@ -355,7 +355,7 @@ export class UserListScreen extends Component {
                     </Content>
                 }
 
-                <Footer>
+                {!isEmptyValue(this.state.uid) && <Footer>
                     <FooterTab style={mainStyle.footer}>
                         <TouchableOpacity onPress={() => this.setState({ step: 'reject' })}>
                             <Text style={[{ textAlign: 'center', padding: 5, borderRadius: 10 }
@@ -366,7 +366,7 @@ export class UserListScreen extends Component {
                                 , step === 'accept' && { backgroundColor: themeStyle.Color_green }]}>อนุมัติแล้ว</Text>
                         </TouchableOpacity>
                     </FooterTab>
-                </Footer>
+                </Footer>}
 
             </Container>
         )
