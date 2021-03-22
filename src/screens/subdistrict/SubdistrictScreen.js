@@ -44,8 +44,9 @@ export class SubdistrictScreen extends Component {
 
     }
 
+
     componentDidMount() {
-        this.getMainData();
+        // this.getMainData();
     }
     getMainData() {
         this.setState({
@@ -54,12 +55,9 @@ export class SubdistrictScreen extends Component {
         try {
             tbMain
                 .doc(this.state.Area.ID).get().then((doc) => {
-                    const { M_chanel_input, M_urge, M_alcohol, M_influence, Family, career, Family_Total_income, Tradition,
-                        TraditionAndNarcotic, ProtectAndNarcotic, ProtectAndCovid, } = doc.data();
                     if (doc.exists) {
                         this.setState({
-                            M_chanel_input, M_urge, M_alcohol, M_influence, Family, career, Family_Total_income, Tradition,
-                            TraditionAndNarcotic, ProtectAndNarcotic, ProtectAndCovid, step: 'view',
+                            ...doc.data(), step: 'view',
                             loading: false
                         })
                     }
@@ -76,6 +74,7 @@ export class SubdistrictScreen extends Component {
             })
             console.log(error)
         }
+
     };
     onCancel = () => {
         this.setState({

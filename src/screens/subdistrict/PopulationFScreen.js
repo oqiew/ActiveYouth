@@ -40,13 +40,21 @@ export class PopulationFScreen extends Component {
         try {
             tbMain
                 .doc(this.state.Area.ID).get().then((doc) => {
-                    const { PopulationFs } = doc.data();
                     if (doc.exists) {
-                        this.setState({
-                            step: 'view',
-                            loading: false,
-                            Populations: PopulationFs
-                        })
+                        const { PopulationFs } = doc.data();
+                        if (!isEmptyValue(PopulationFs)) {
+                            this.setState({
+                                step: 'view',
+                                loading: false,
+                                Populations: PopulationFs
+                            })
+                        } else {
+                            this.setState({
+                                step: 'view',
+                                loading: false,
+                            })
+                        }
+
                     }
 
                 }).catch((error) => {
@@ -79,34 +87,26 @@ export class PopulationFScreen extends Component {
         this.setState({
             loading: true
         })
-        try {
-            // update
-            console.log('update religion', this.state.Populations)
-            tbMain
-                .doc(this.state.Area.ID)
-                .update({
-                    Area_ID: this.state.Area.ID,
-                    Update_by_ID: this.state.uid,
-                    Update_date: Firestore.Timestamp.now(),
-                    PopulationFs: this.state.Populations
-                })
-                .then(result => {
-                    Alert.alert('อัพเดตสำเร็จ');
-                    this.onCancel();
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.setState({
-                        loading: false,
-                    });
-
+        tbMain
+            .doc(this.state.Area.ID)
+            .update({
+                Update_by_ID: this.state.uid,
+                Update_date: Firestore.Timestamp.now(),
+                PopulationFs: this.state.Populations
+            })
+            .then(result => {
+                Alert.alert('อัพเดตสำเร็จ');
+                this.onCancel();
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({
+                    loading: false,
                 });
 
+            });
 
 
-        } catch (error) {
-            console.log(error);
-        }
     }
     onBackHandler = () => {
         this.props.navigation.goBack()
