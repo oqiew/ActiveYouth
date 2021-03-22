@@ -136,7 +136,7 @@ export class PopulationMScreen extends Component {
                             <Item fixedLabel key={'M' + i}>
                                 <Label>อายุ{i === 0 && "ต่ำกว่า"}{i === 119 && "มากกว่า"} {i + 1} :</Label>
                                 <Input value={element}
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                                     disabled={step === 'view'}
                                     placeholder="จำนวน"
                                     keyboardType='numeric'
