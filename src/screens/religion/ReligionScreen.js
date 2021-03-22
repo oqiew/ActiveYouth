@@ -494,7 +494,7 @@ export class ReligionScreen extends Component {
                             <Item stackedLabel>
                                 <Label>บุคคลที่สำคัญ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Religion_user}
                                     onChangeText={str =>
@@ -506,7 +506,7 @@ export class ReligionScreen extends Component {
                             <Item stackedLabel>
                                 <Label>กิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Religion_activity}
                                     onChangeText={str =>
@@ -518,7 +518,7 @@ export class ReligionScreen extends Component {
                             <Item stackedLabel>
                                 <Label>การจำหน่ายบุหรี่และเครื่องดื่มแอลกอฮอล์<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Religion_alcohol}
                                     onChangeText={str =>
@@ -530,7 +530,7 @@ export class ReligionScreen extends Component {
                             <Item stackedLabel>
                                 <Label>covid 19<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Relegion_covid19}
                                     onChangeText={str =>
@@ -542,7 +542,7 @@ export class ReligionScreen extends Component {
                             <Item stackedLabel>
                                 <Label>ความเชื่อ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Relegion_belief}
                                     onChangeText={str =>

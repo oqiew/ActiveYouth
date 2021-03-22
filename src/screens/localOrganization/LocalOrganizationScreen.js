@@ -517,7 +517,7 @@ export class LocalOrganizationScreen extends Component {
                             <Item stackedLabel>
                                 <Label>นโยบาย<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Lgo_policy_youth}
                                     onChangeText={str =>
@@ -529,7 +529,7 @@ export class LocalOrganizationScreen extends Component {
                             <Item stackedLabel>
                                 <Label>กิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Lgo_activity}
                                     onChangeText={str =>
@@ -541,7 +541,7 @@ export class LocalOrganizationScreen extends Component {
                             <Item stackedLabel>
                                 <Label>กิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Lgo_activity_protect}
                                     onChangeText={str =>
