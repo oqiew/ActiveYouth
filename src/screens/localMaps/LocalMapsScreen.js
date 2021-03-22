@@ -566,7 +566,7 @@ export class LocalMapsScreen extends Component {
                                     <Item stackedLabel>
                                         <Label>ลักษณะกิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                         <Textarea
-                                            style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
+                                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
                                             rowSpan={4}
                                             value={Lm_description}
                                             onChangeText={str =>
@@ -578,7 +578,7 @@ export class LocalMapsScreen extends Component {
                                     <Item stackedLabel>
                                         <Label>ผลที่เกิดขึ้น<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                         <Textarea
-                                            style={{ backgroundColor: '#ffffff', borderRadius: 5, maxWidth: '100%' }}
+                                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
                                             rowSpan={4}
                                             value={Lm_action}
                                             onChangeText={str =>
