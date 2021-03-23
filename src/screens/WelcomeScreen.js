@@ -68,14 +68,14 @@ export class WelcomeScreen extends Component {
                                 loading: false
                             })
                             this.props.navigation.navigate(routeName.Home)
-                            // console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
+                            console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
                         }
                         else {
                             this.props.addProfile({ uid: user.uid, email: user.email })
                             this.setState({
                                 loading: false
                             })
-                            // console.log('home set user no profile', user.uid, user.email)
+                            console.log('home set user no profile', user.uid, user.email)
                             this.props.navigation.navigate(routeName.ProfileEdit)
                         }
 
@@ -84,14 +84,14 @@ export class WelcomeScreen extends Component {
                         this.setState({
                             loading: false
                         })
-                        // console.log('error home set user no profile', user.uid, user.email, error)
+                        console.log('error home set user no profile', user.uid, user.email, error)
                         this.props.navigation.navigate(routeName.ProfileEdit)
                     })
                 } else {
                     this.setState({
                         loading: false
                     })
-                    // console.log('You are not logged in.')
+                    console.log('You are not logged in.')
 
                 }
             })

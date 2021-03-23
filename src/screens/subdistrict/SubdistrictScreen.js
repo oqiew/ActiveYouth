@@ -44,9 +44,8 @@ export class SubdistrictScreen extends Component {
 
     }
 
-
     componentDidMount() {
-        // this.getMainData();
+        this.getMainData();
     }
     getMainData() {
         this.setState({
@@ -55,9 +54,12 @@ export class SubdistrictScreen extends Component {
         try {
             tbMain
                 .doc(this.state.Area.ID).get().then((doc) => {
+                    const { M_chanel_input, M_urge, M_alcohol, M_influence, Family, career, Family_Total_income, Tradition,
+                        TraditionAndNarcotic, ProtectAndNarcotic, ProtectAndCovid, } = doc.data();
                     if (doc.exists) {
                         this.setState({
-                            ...doc.data(), step: 'view',
+                            M_chanel_input, M_urge, M_alcohol, M_influence, Family, career, Family_Total_income, Tradition,
+                            TraditionAndNarcotic, ProtectAndNarcotic, ProtectAndCovid, step: 'view',
                             loading: false
                         })
                     }
@@ -74,7 +76,6 @@ export class SubdistrictScreen extends Component {
             })
             console.log(error)
         }
-
     };
     onCancel = () => {
         this.setState({
@@ -170,7 +171,7 @@ export class SubdistrictScreen extends Component {
                     <Item fixedLabel>
                         <Label>ครัวเรือน :</Label>
                         <Input value={Family}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, width: '100%' }}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             placeholder="จำนวน"
                             keyboardType='numeric'
@@ -181,7 +182,7 @@ export class SubdistrictScreen extends Component {
                         <Label>อาชีพ :</Label>
 
                         <Textarea rowSpan={4} value={career} style={{ fontSize: 16 }}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             onChangeText={str => this.setState({ career: str })}
                             placeholder="อาชีพหลักของคนในชุมชน ประกอบอาชีพอะไรบ้าง" />
@@ -189,7 +190,7 @@ export class SubdistrictScreen extends Component {
                     <Item fixedLabel>
                         <Label>รายได้เฉลี่ยต่อเดือน :</Label>
                         <Input value={Family_Total_income}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, width: '100%' }}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             placeholder="จำนวน"
                             keyboardType='numeric'
@@ -198,8 +199,8 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>ประเพณี :</Label>
 
-                        <Textarea rowSpan={4} value={Tradition}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                        <Textarea rowSpan={4} style={{ fontSize: 16 }} value={Tradition}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             onChangeText={str => this.setState({ Tradition: str })}
                             placeholder="ประเพณี วัฒนธรรมที่เป็นเอกสารลักษณ์ของตำบล" />
@@ -207,8 +208,8 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>ประเพณีมีการสูบบุหรี่ ดื่มสุรา  :</Label>
 
-                        <Textarea rowSpan={4} value={TraditionAndNarcotic}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                        <Textarea rowSpan={4} style={{ fontSize: 16 }} value={TraditionAndNarcotic}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             onChangeText={str => this.setState({ TraditionAndNarcotic: str })}
                             placeholder="บุญประเพณีของพื้นที่ที่เกี่ยวข้องกับการสูบบุหรี่ ดื่มสุราจากมากไปหาน้อย (5 ลำดับ)" />
@@ -216,15 +217,15 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>กิจกรรมส่งเสริมสุขภาพ :</Label>
 
-                        <Textarea rowSpan={4} value={ProtectAndNarcotic}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                        <Textarea rowSpan={4} style={{ fontSize: 16 }} value={ProtectAndNarcotic}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             onChangeText={str => this.setState({ ProtectAndNarcotic: str })}
                             placeholder="กิจกรรมหรือแนวทางการส่งเสริมสุขภาพและการลดปัจจัยเสี่ยงสุขภาพ (บุหรี่ สุรา อุบัติเหตุ ฯลฯ)ที่ผ่านมาของชุมชน" />
                     </Item><Item stackedLabel>
                         <Label>กิจกรรมส่งเสริมสุขภาพ ในช่วง covid 19 :</Label>
-                        <Textarea rowSpan={5} value={ProtectAndCovid}
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                        <Textarea rowSpan={5} style={{ fontSize: 16 }} value={ProtectAndCovid}
+                            style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
                             disabled={step === 'view'}
                             onChangeText={str => this.setState({ ProtectAndCovid: str })}
                             placeholder="กิจกรรมหรือแนวทางการส่งเสริมสุขภาพและการลดปัจจัยเสี่ยงสุขภาพ (บุหรี่ สุรา อุบัติเหตุ ฯลฯ)ในช่วงการแพร่ระบาดของโควิด-19ที่ผ่านมาของชุมชน" />
@@ -232,7 +233,7 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>การรับข้อมูล<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                         <Textarea
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                            style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                             rowSpan={4}
                             value={M_chanel_input}
                             onChangeText={str =>
@@ -244,7 +245,7 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>สื่อ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                         <Textarea
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                            style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                             rowSpan={4}
                             value={M_urge}
                             onChangeText={str =>
@@ -256,7 +257,7 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>ช่องทาง<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                         <Textarea
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                            style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                             rowSpan={4}
                             value={M_alcohol}
                             onChangeText={str =>
@@ -268,7 +269,7 @@ export class SubdistrictScreen extends Component {
                     <Item stackedLabel>
                         <Label>อิทธิพล<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                         <Textarea
-                            style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                            style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                             rowSpan={4}
                             value={M_influence}
                             onChangeText={str =>

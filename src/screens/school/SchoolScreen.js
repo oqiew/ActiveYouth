@@ -79,7 +79,7 @@ export class SchoolScreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        image={school}
+                        // image={icon_m}
                         icon={school}
                     // label={count}
                     >
@@ -478,7 +478,7 @@ export class SchoolScreen extends Component {
                             <Item fixedLabel>
                                 <Label>ชื่อพื้นที่<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Input
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, width: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     value={School_name}
                                     onChangeText={str => this.setState({ School_name: str })}
                                 />
@@ -486,7 +486,7 @@ export class SchoolScreen extends Component {
                             <Item stackedLabel>
                                 <Label>การเรียน<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     rowSpan={4}
                                     value={School_study}
                                     onChangeText={str =>
@@ -498,7 +498,7 @@ export class SchoolScreen extends Component {
                             <Item stackedLabel>
                                 <Label>กิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     rowSpan={4}
                                     value={School_activity}
                                     onChangeText={str =>
@@ -510,7 +510,7 @@ export class SchoolScreen extends Component {
                             <Item stackedLabel>
                                 <Label>การจำหน่ายบุหรี่และเครื่องดื่มแอลกอฮอล์<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     rowSpan={4}
                                     value={School_alcohol}
                                     onChangeText={str =>
@@ -522,7 +522,7 @@ export class SchoolScreen extends Component {
                             <Item stackedLabel>
                                 <Label>การสูบบุหรี่<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     rowSpan={4}
                                     value={School_cigarette}
                                     onChangeText={str =>
@@ -534,7 +534,7 @@ export class SchoolScreen extends Component {
                             <Item stackedLabel>
                                 <Label>covid 19<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     rowSpan={4}
                                     value={School_covid19}
                                     onChangeText={str =>
