@@ -11,6 +11,7 @@ import { addProfile, setArea } from '../../redux/Reducer';
 import Auth from '@react-native-firebase/auth'
 import Firestore from '@react-native-firebase/firestore'
 import { TableName } from '../../database/TableName'
+import { isEmptyValue } from '../../components/Method'
 export class SigninScreen extends Component {
     constructor(props) {
         super(props);
@@ -18,11 +19,31 @@ export class SigninScreen extends Component {
         this.tbArea = Firestore().collection(TableName.Areas);
         this.state = {
             loading: false,
+            // Email: 'asoyergas@gmail.com',
+            // Password: '12345678',
             Email: '',
             Password: '',
             pass: true,
             icon: 'eye-with-line',
         }
+    }
+    getArea = async (id) => {
+        return new Promise((resolve, reject) => {
+            try {
+                this.tbArea.doc(id).get().then((doc) => {
+                    let area = { ID: doc.id, ...doc.data() }
+
+                    resolve(area)
+                }).catch((error) => {
+                    console.log('reject alert', error)
+                    reject('')
+                })
+
+            } catch (error) {
+                console.log('reject alert', error)
+                reject('')
+            }
+        })
     }
     componentDidMount() {
         this.setState({
@@ -32,7 +53,6 @@ export class SigninScreen extends Component {
             Auth().onAuthStateChanged((user) => {
                 if (user) {
                     this.tbUser.doc(user.uid).get().then((doc) => {
-
                         if (doc.exists) {
                             this.props.addProfile({ uid: user.uid, email: user.email, ...doc.data() })
                             this.tbArea.doc(doc.data().Area_ID).get().then((doc2) => {
@@ -41,16 +61,17 @@ export class SigninScreen extends Component {
                                     this.setState({
                                         loading: false
                                     })
-                                    console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
+                                    // console.log('home set user', { uid: user.uid, email: user.email, ...doc.data() })
                                     this.props.navigation.navigate(routeName.Home)
                                 }
                             })
                         } else {
+                            // console.log('error signin')
                             this.props.addProfile({ uid: user.uid, email: user.email })
                             this.setState({
                                 loading: false
                             })
-                            console.log('home set user no profile', user.uid, user.email)
+                            // console.log('home set user no profile', user.uid, user.email)
                             this.props.navigation.navigate(routeName.ProfileEdit)
                         }
 
@@ -59,14 +80,14 @@ export class SigninScreen extends Component {
                         this.setState({
                             loading: false
                         })
-                        console.log('error home set user no profile', user.uid, user.email)
+                        // console.log('error home set user no profile', user.uid, user.email)
                         this.props.navigation.navigate(routeName.ProfileEdit)
                     })
                 } else {
                     this.setState({
                         loading: false
                     })
-                    console.log('You are not logged in.')
+                    // console.log('You are not logged in.')
 
                 }
             })
@@ -76,10 +97,10 @@ export class SigninScreen extends Component {
     onSignin() {
         const { Email, Password } = this.state;
         this.setState({ loading: true });
-        console.log(Email, Password)
+        // console.log(Email, Password)
         Auth().signInWithEmailAndPassword(Email, Password)
             .then((user) => {
-                console.log('login success', user.user.uid)
+                // console.log('login success', user.user.uid)
                 query_user(user);
             })
             .catch((msgError) => {
@@ -88,30 +109,30 @@ export class SigninScreen extends Component {
                 Alert.alert("can not login", msgError.message);
             });
         const query_user = (user) => {
-            var uid = '';
-            var email = '';
-            if (Platform.OS === 'ios') {
-                uid = user.uid;
-                email = user.email;
-            } else {
-                uid = user.user.uid;
-                email = user.user.email;
-            }
-            this.tbUser.doc(uid).get().then((doc) => {
-                console.log(doc.data())
+            var uid = user.user.uid;
+            var email = user.user.email;
+
+            this.tbUser.doc(uid).get().then(async (doc) => {
                 if (doc.exists) {
                     this.props.addProfile({ uid: uid, email: email, ...doc.data() })
+                    if (!isEmptyValue(doc.data().Area_ID)) {
+
+                        const area = await this.getArea(doc.data().Area_ID);
+                        if (!isEmptyValue(area)) {
+                            this.props.setArea({ ID: area.ID, ...area })
+                        }
+                    }
                     this.setState({
                         loading: false
                     })
-                    console.log('home set user', { uid: uid, email: email, ...doc.data() })
+                    // console.log('home set user', { uid: uid, email: email, ...doc.data() })
                     this.props.navigation.navigate(routeName.Home)
                 } else {
                     this.props.addProfile({ uid: uid, email: email })
                     this.setState({
                         loading: false
                     })
-                    console.log('home set user no profile', uid, email)
+                    // console.log('home set user no profile', uid, email)
                     this.props.navigation.navigate(routeName.ProfileEdit)
                 }
 
@@ -120,7 +141,7 @@ export class SigninScreen extends Component {
                 this.setState({
                     loading: false
                 })
-                console.log('error home set user no profile', uid, email)
+                // console.log('error home set user no profile', uid, email)
                 this.props.navigation.navigate(routeName.ProfileEdit)
             })
         }
@@ -155,7 +176,7 @@ export class SigninScreen extends Component {
                 <Content contentContainerStyle={[mainStyle.background, { height: '100%' }]}>
                     <View style={mainStyle.content}>
 
-                        <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>สมัครสมาชิก</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 26, color: '#0080ff' }}>เข้าสู่ระบบ</Text>
                         <Item floatingLabel style={{ marginTop: 10 }}>
                             <Icon active name='mail' type="AntDesign"></Icon>
                             <Label>email</Label>

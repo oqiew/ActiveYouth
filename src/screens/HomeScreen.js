@@ -77,30 +77,18 @@ export class HomeScreen extends Component {
 
     onSelectedArea(Area) {
         const { User_type } = this.state;
-        if (User_type === 'admin') {
-            this.tbUser.doc(this.state.uid).update({
-                Area_ID: Area.ID
-            }).then(() => {
-                this.props.setArea({ Area })
-                this.setState({
-                    Area, select_area: false
-                })
-            }).catch((error) => {
-                console.log('error update area', error)
+
+        this.tbUser.doc(this.state.uid).update({
+            Area_ID: Area.ID
+        }).then(() => {
+            this.props.setArea(Area)
+            this.setState({
+                Area, select_area: false
             })
-        } else {
-            this.tbUser.doc(this.state.uid).update({
-                User_type: 'ay',
-                Area_ID: Area.ID
-            }).then(() => {
-                this.props.setArea({ Area })
-                this.setState({
-                    Area, select_area: false
-                })
-            }).catch((error) => {
-                console.log('error update area', error)
-            })
-        }
+        }).catch((error) => {
+            console.log('error update area', error)
+        })
+
 
 
     }

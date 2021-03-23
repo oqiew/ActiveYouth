@@ -65,13 +65,7 @@ export class GuestHomeScreen extends Component {
                                 source={require('../assets/database.png')}
                                 style={{ width: 50, height: 50 }}></Image>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate(routeName.Profile)}
-                        >
-                            <Image
-                                source={require('../assets/user.png')}
-                                style={{ width: 50, height: 50 }}></Image>
-                        </TouchableOpacity>
+
                     </FooterTab>
                 </Footer>
             </Container>

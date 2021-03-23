@@ -76,7 +76,7 @@ export class Youthnetworkscreen extends Component {
                             latitude: Position.lat,
                             longitude: Position.lng,
                         }}
-                        // image={icon_m}
+                        image={user_network}
                         icon={user_network}
                     // label={count}
                     >
@@ -486,7 +486,7 @@ export class Youthnetworkscreen extends Component {
                             <Item stackedLabel>
                                 <Label>รายละเอียด<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
-                                    style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
                                     rowSpan={4}
                                     value={Yn_description}
                                     onChangeText={str =>

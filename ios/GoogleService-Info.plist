@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>758905621786-frcp32kv71usfnn1c0hub8lp8q2fqj85.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.758905621786-frcp32kv71usfnn1c0hub8lp8q2fqj85</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBtDY2gp6LG-1FaXjJ96nFGaOYZ_W9HhC4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>758905621786</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.activeyouth</string>
+	<key>PROJECT_ID</key>
+	<string>activeyouth-73fad</string>
+	<key>STORAGE_BUCKET</key>
+	<string>activeyouth-73fad.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:758905621786:ios:ec50485399081e22e0f0a3</string>
+</dict>
+</plist>

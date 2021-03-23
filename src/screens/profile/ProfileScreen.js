@@ -4,7 +4,7 @@ import { View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button } from 'native-base';
 import { connect } from 'react-redux';
 import Loading from '../../components/Loading';
-import { addProfile } from '../../redux/Reducer';
+import { addProfile, setArea } from '../../redux/Reducer';
 import upload from '../../assets/upload.png'
 import mainStyle from '../../styles/main.style';
 import { routeName } from '../../route/routeName';
@@ -34,6 +34,7 @@ export class ProfileScreen extends Component {
             loading: true
         })
         this.props.addProfile({});
+        this.props.setArea({});
         Auth()
             .signOut()
             .then(response => {
@@ -59,11 +60,8 @@ export class ProfileScreen extends Component {
                 <Content contentContainerStyle={mainStyle.background}>
 
                     <View style={{
-                        flex: 1,
                         flexDirection: 'column',
-                        justifyContent: 'center',
                         alignItems: 'center',
-                        alignContent: 'center',
                     }}>
                         {Avatar_URL === '' ? (
                             <Image
@@ -162,7 +160,7 @@ const mapStateToProps = state => ({
 
 //used to action (dispatch) in to props
 const mapDispatchToProps = {
-    addProfile,
+    addProfile, setArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileScreen);

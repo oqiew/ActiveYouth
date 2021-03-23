@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Image, TouchableOpacity, Alert, Platform, StyleSheet } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button } from 'native-base';
 import { connect } from 'react-redux';
 import { addProfile } from '../../redux/Reducer';
@@ -14,7 +14,50 @@ import { TableName } from '../../database/TableName'
 import { isEmptyValue } from '../../components/Method';
 const tbMain = Firestore().collection(TableName.Areas);
 const tbname = TableName.Areas;
+const _styles = StyleSheet.create({
 
+    MainContainer: {
+
+        justifyContent: 'center',
+        flex: 1,
+        margin: 10
+    },
+
+    rowViewContainer:
+    {
+
+        fontSize: 18,
+        paddingRight: 10,
+        paddingTop: 10,
+        paddingBottom: 10,
+
+    },
+
+    topButton: {
+
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 30,
+        bottom: 150,
+    },
+
+
+
+    bottomButton: {
+
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 30,
+        bottom: 110,
+    },
+
+});
 export class PopulationFScreen extends Component {
     constructor(props) {
         super(props)
@@ -22,10 +65,10 @@ export class PopulationFScreen extends Component {
             loading: false,
             ...this.props.userReducer.profile,
             Area: this.props.userReducer.area,
-            Populations: ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
+            Populations: ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
             step: 'view'
 
         }
@@ -40,13 +83,20 @@ export class PopulationFScreen extends Component {
         try {
             tbMain
                 .doc(this.state.Area.ID).get().then((doc) => {
-                    const { PopulationFs } = doc.data();
                     if (doc.exists) {
-                        this.setState({
-                            step: 'view',
-                            loading: false,
-                            Populations: PopulationFs
-                        })
+                        const { PopulationFs } = doc.data();
+                        if (!isEmptyValue(PopulationFs)) {
+                            this.setState({
+                                step: 'view',
+                                loading: false,
+                                Populations: PopulationFs
+                            })
+                        } else {
+                            this.setState({
+                                step: 'view',
+                                loading: false,
+                            })
+                        }
                     }
 
                 }).catch((error) => {
@@ -79,34 +129,26 @@ export class PopulationFScreen extends Component {
         this.setState({
             loading: true
         })
-        try {
-            // update
-            console.log('update religion', this.state.Populations)
-            tbMain
-                .doc(this.state.Area.ID)
-                .update({
-                    Area_ID: this.state.Area.ID,
-                    Update_by_ID: this.state.uid,
-                    Update_date: Firestore.Timestamp.now(),
-                    PopulationFs: this.state.Populations
-                })
-                .then(result => {
-                    Alert.alert('อัพเดตสำเร็จ');
-                    this.onCancel();
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.setState({
-                        loading: false,
-                    });
-
+        tbMain
+            .doc(this.state.Area.ID)
+            .update({
+                Update_by_ID: this.state.uid,
+                Update_date: Firestore.Timestamp.now(),
+                PopulationFs: this.state.Populations
+            })
+            .then(result => {
+                Alert.alert('อัพเดตสำเร็จ');
+                this.onCancel();
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({
+                    loading: false,
                 });
 
+            });
 
 
-        } catch (error) {
-            console.log(error);
-        }
     }
     onBackHandler = () => {
         this.props.navigation.goBack()
@@ -118,7 +160,9 @@ export class PopulationFScreen extends Component {
             <Container>
                 <Loading visible={loading}></Loading>
                 <HeaderAy name="ประชากร" backHandler={this.onBackHandler}></HeaderAy>
-                <Content contentContainerStyle={mainStyle.background}>
+                <Content
+                    ref='ListView'
+                    contentContainerStyle={mainStyle.background}>
                     <View style={{ flexDirection: "row", justifyContent: 'flex-end' }}>
                         <TouchableOpacity
                             onPress={() => this.setState({ step: "edit" })}
@@ -135,7 +179,7 @@ export class PopulationFScreen extends Component {
                             <Item fixedLabel key={'M' + i}>
                                 <Label>อายุ{i === 0 && "ต่ำกว่า"}{i === 119 && "มากกว่า"} {i + 1} :</Label>
                                 <Input value={element}
-                                    style={{ backgroundColor: '#ffffff', borderRadius: 5 }}
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, }}
                                     disabled={step === 'view'}
                                     placeholder="จำนวน"
                                     keyboardType='numeric'
@@ -160,6 +204,25 @@ export class PopulationFScreen extends Component {
                         </Button>
                     </View>}
                 </Content>
+                <TouchableOpacity activeOpacity={0.5}
+                    onPress={() => {
+                        this.refs.ListView._root.scrollToPosition(0, 0, { animated: true });
+                    }}
+                    style={_styles.topButton} >
+
+                    <Icon name="arrowup" type="AntDesign" />
+                </TouchableOpacity>
+
+
+                <TouchableOpacity activeOpacity={0.5}
+                    onPress={() => {
+                        this.refs.ListView._root.scrollToEnd({ animated: true });
+                    }}
+                    style={_styles.bottomButton} >
+
+                    <Icon name="arrowdown" type="AntDesign" />
+
+                </TouchableOpacity>
             </Container>
         )
     }

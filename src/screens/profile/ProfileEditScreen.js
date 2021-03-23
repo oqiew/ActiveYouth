@@ -16,6 +16,7 @@ import Loading from '../../components/Loading';
 import { TableName } from '../../database/TableName';
 import { routeName } from '../../route/routeName';
 import mainStyle from '../../styles/main.style';
+import Auth from '@react-native-firebase/auth';
 
 const style_private = StyleSheet.create({
     image: {
