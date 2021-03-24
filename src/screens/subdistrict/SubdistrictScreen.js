@@ -46,7 +46,7 @@ export class SubdistrictScreen extends Component {
 
 
     componentDidMount() {
-        // this.getMainData();
+        this.getMainData();
     }
     getMainData() {
         this.setState({
