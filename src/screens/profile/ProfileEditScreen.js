@@ -234,10 +234,12 @@ export class ProfileEditScreen extends Component {
                         <Item fixedLabel style={{ marginTop: 5 }}>
                             <Label>เพศ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                             <Picker
+                                mode="dropdown"
+                                placeholder="เลือกเพศ"
+                                iosIcon={<Icon name="down" type="AntDesign"></Icon>}
                                 style={{ left: -56 }}
                                 selectedValue={Sex}
                                 onValueChange={str => this.setState({ Sex: str })}>
-                                <Picker.Item label="เลือกเพศ" value="" />
                                 <Picker.Item label="ชาย" value="ชาย" />
                                 <Picker.Item label="หญิง" value="หญิง" />
                                 <Picker.Item label="อื่นๆ" value="อื่นๆ" />

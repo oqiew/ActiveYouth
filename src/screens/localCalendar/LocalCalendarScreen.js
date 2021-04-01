@@ -272,10 +272,12 @@ export class LocalCalendarScreen extends Component {
                             <Item fixedLabel >
                                 <Label>ประเภท</Label>
                                 <Picker
+                                    mode="dropdown"
+                                    placeholder="เลือกประเภทกิจกรรม"
+                                    iosIcon={<Icon name="down" type="AntDesign"></Icon>}
                                     selectedValue={Type_activity}
                                     onValueChange={str => this.setState({ Type_activity: str })}
                                 >
-                                    <Picker.Item key="0" label="เลือกประเภทกิจกรรม" value="" />
                                     <Picker.Item key="1" label="วัฒนธรรมประเพณี" value="วัฒนธรรมประเพณี" />
                                     <Picker.Item key="2" label="เศรษฐกิจ" value="เศรษฐกิจ" />
                                 </Picker>
