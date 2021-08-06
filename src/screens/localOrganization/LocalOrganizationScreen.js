@@ -49,9 +49,82 @@ export class LocalOrganizationScreen extends Component {
             Lgo_policy_youth: '',
             Lgo_activity_protect: '',
             Lgo_activity: '',
+            // หัวข้อม index 0-3 [ฝ่ายงานที่เกี่ยวข้อง,จำนวนบุคลากร,นโยบาย/แผนงานขององค์กรปกครองส่วนท้องถิ่นที่เกี่ยวข้อง,โครงการ/กิจกรรมที่ผ่านมา]
+            // index 0 ชื่อกิจกรรม
+            name_quest: [['ส่งเสริมการพัฒนาสตรี เด็ก เยาวชน ผู้สูงอายุ และผู้พิการ'],
+            ['ส่งเสริมสุขภาพ ป้องกันโรคและระงับโรคติดต่อ'],
+            ['กำกับ ควบคุม บำรุงสถานที่สาธารณะในพื้นที่/ การปรับปรุงแหล่งชุมชนและการจัดการเกี่ยวกับที่อยู่อาศัย'],
+            ['ส่งเสริมการฝึกและการประกอบอาชีพ'],
+            ['การจัดการศึกษา'],
+            ['สังคมสงเคราะห์และการ'],
+            ['พัฒนาคุณภาพชีวิตเด็ก สตรี คนชรา และผู้ด้อยโอกาส'],
+            ['การสาธารณสุข การอนามัยครอบครัวและการรักษาพยาบาล'],
+            ['การจัดระเบียบชุมชนสังคม/ ส่งเสริมและสนับสนุนการป้องกันและรักษาความปลอดภัยในชีวิต'],
+            ['ส่งเสริม บำรุงศาสนาและวัฒนธรรม จารีต ประเพณี ภูมิปัญญาท้องถิ่น'],
+            ['ส่งเสริมการมีส่วนร่วมของประชาชนในการมีมาตรการป้องกัน']],
+            Quest1: ['', '', '', ''],
+            Quest2: ['', '', '', ''],
+            Quest3: ['', '', '', ''],
+            Quest4: ['', '', '', ''],
+            Quest5: ['', '', '', ''],
+            Quest6: ['', '', '', ''],
+            Quest7: ['', '', '', ''],
+            Quest8: ['', '', '', ''],
+            Quest9: ['', '', '', ''],
+            Quest10: ['', '', '', ''],
+            Quest11: ['', '', '', '']
         }
     }
+    setQuest(index1, index2, value) {
+        var temp_quest1 = this.state.Quest1;
+        var temp_quest2 = this.state.Quest2;
+        var temp_quest3 = this.state.Quest3;
+        var temp_quest4 = this.state.Quest4;
+        var temp_quest5 = this.state.Quest5;
+        var temp_quest6 = this.state.Quest6;
+        var temp_quest7 = this.state.Quest7;
+        var temp_quest8 = this.state.Quest8;
+        var temp_quest9 = this.state.Quest9;
+        var temp_quest10 = this.state.Quest10;
+        var temp_quest11 = this.state.Quest11;
+        if (index1 === 0) {
+            temp_quest1[index2] = value;
+        } else if (index1 === 1) {
+            temp_quest2[index2] = value;
+        } else if (index1 === 2) {
+            temp_quest3[index2] = value;
+        } else if (index1 === 3) {
+            temp_quest4[index2] = value;
+        } else if (index1 === 4) {
+            temp_quest5[index2] = value;
+        } else if (index1 === 5) {
+            temp_quest6[index2] = value;
+        } else if (index1 === 6) {
+            temp_quest7[index2] = value;
+        } else if (index1 === 7) {
+            temp_quest8[index2] = value;
+        } else if (index1 === 8) {
+            temp_quest9[index2] = value;
+        } else if (index1 === 9) {
+            temp_quest10[index2] = value;
+        } else if (index1 === 10) {
+            temp_quest11[index2] = value;
+        }
 
+        this.setState({
+            Quest1: temp_quest1,
+            Quest2: temp_quest2,
+            Quest3: temp_quest3,
+            Quest4: temp_quest4,
+            Quest5: temp_quest5,
+            Quest6: temp_quest6,
+            Quest7: temp_quest7,
+            Quest8: temp_quest8,
+            Quest9: temp_quest9,
+            Quest10: temp_quest10,
+            Quest11: temp_quest11,
+        })
+    }
     componentDidMount() {
         tbMain.where('Area_ID', '==', this.state.Area.ID)
             .onSnapshot(this.ListMark);
@@ -197,6 +270,7 @@ export class LocalOrganizationScreen extends Component {
 
     };
     onSubmit = async () => {
+
         console.log('call')
         this.setState({
             loading: true
@@ -204,7 +278,8 @@ export class LocalOrganizationScreen extends Component {
         try {
             const { map_image_uri, Map_image_URL, new_upload_image, Map_image_name, position } = this.state;
             const { Lgo_name, Lgo_type, Lgo_position_youth, Lgo_officer,
-                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity } = this.state;
+                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, } = this.state;
+            const { Quest1, Quest2, Quest3, Quest4, Quest5, Quest6, Quest7, Quest8, Quest9, Quest10, Quest11 } = this.state;
             let temp_image_URL = "";
             let new_id = '';
             if (!isEmptyValue(this.state.edit_ID)) {
@@ -242,7 +317,8 @@ export class LocalOrganizationScreen extends Component {
                                 Map_image_name: new_id,
                                 Position: position,
                                 Lgo_name, Lgo_type, Lgo_position_youth,
-                                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, Lgo_officer
+                                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, Lgo_officer,
+                                Quest1, Quest2, Quest3, Quest4, Quest5, Quest6, Quest7, Quest8, Quest9, Quest10, Quest11
 
                             })
                             .then(result => {
@@ -269,7 +345,8 @@ export class LocalOrganizationScreen extends Component {
                                 Map_image_name: new_id,
                                 Position: position,
                                 Lgo_name, Lgo_type, Lgo_position_youth,
-                                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, Lgo_officer
+                                Lgo_policy_youth, Lgo_activity_protect, Lgo_activity, Lgo_officer,
+                                Quest1, Quest2, Quest3, Quest4, Quest5, Quest6, Quest7, Quest8, Quest9, Quest10, Quest11
                             })
                             .then(result => {
                                 Alert.alert('อัพเดตสำเร็จ');
@@ -316,6 +393,17 @@ export class LocalOrganizationScreen extends Component {
             Lgo_policy_youth: '',
             Lgo_activity_protect: '',
             Lgo_activity: '',
+            Quest1: ['', '', '', ''],
+            Quest2: ['', '', '', ''],
+            Quest3: ['', '', '', ''],
+            Quest4: ['', '', '', ''],
+            Quest5: ['', '', '', ''],
+            Quest6: ['', '', '', ''],
+            Quest7: ['', '', '', ''],
+            Quest8: ['', '', '', ''],
+            Quest9: ['', '', '', ''],
+            Quest10: ['', '', '', ''],
+            Quest11: ['', '', '', '']
         })
     }
     onEdit = (data) => {
@@ -335,6 +423,17 @@ export class LocalOrganizationScreen extends Component {
             Lgo_activity_protect: data.Lgo_activity_protect,
             Lgo_activity: data.Lgo_activity,
             Lgo_officer: data.Lgo_officer,
+            Quest1: data.Quest1,
+            Quest2: data.Quest2,
+            Quest3: data.Quest3,
+            Quest4: data.Quest4,
+            Quest5: data.Quest5,
+            Quest6: data.Quest6,
+            Quest7: data.Quest7,
+            Quest8: data.Quest8,
+            Quest9: data.Quest9,
+            Quest10: data.Quest10,
+            Quest11: data.Quest11,
 
         })
     }
@@ -355,10 +454,39 @@ export class LocalOrganizationScreen extends Component {
         }
 
     }
+    getDataQuest(index1, index2) {
+        const { Quest1, Quest2, Quest3, Quest4, Quest5, Quest6, Quest7, Quest8, Quest9, Quest10, Quest11 } = this.state
+        if (index1 === 0) {
+            return Quest1[index2];
+        } else if (index1 === 1) {
+            return Quest2[index2];
+        } else if (index1 === 2) {
+            return Quest3[index2];
+        } else if (index1 === 3) {
+            return Quest4[index2];
+        } else if (index1 === 4) {
+            return Quest5[index2];
+        } else if (index1 === 5) {
+            return Quest6[index2];
+        } else if (index1 === 6) {
+            return Quest7[index2];
+        } else if (index1 === 7) {
+            return Quest8[index2];
+        } else if (index1 === 8) {
+            return Quest9[index2];
+        } else if (index1 === 9) {
+            return Quest10[index2];
+        } else if (index1 === 10) {
+            return Quest11[index2];
+        } else {
+            return ""
+        }
+    }
     render() {
         const { loading, step, maps_data, map_image_uri, Map_image_URL } = this.state;
         const { Lgo_name, Lgo_type, Lgo_position_youth, Lgo_officer,
-            Lgo_policy_youth, Lgo_activity_protect, Lgo_activity } = this.state;
+            Lgo_policy_youth, Lgo_activity_protect, Lgo_activity,
+            Quest1, Quest2, Quest3, Quest4, Quest5, Quest6, Quest7, Quest8, Quest9, Quest10, Quest11 } = this.state;
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -486,9 +614,9 @@ export class LocalOrganizationScreen extends Component {
                                 />
                             </Item>
                             <Item fixedLabel>
-                                <Label>รูปแบบ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                <Label>ประเภท<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Input
-                                    placeholder="รูปแบบ-ขนาดของ อปท."
+                                    placeholder="ประเภท-ขนาดของ อปท."
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     value={Lgo_type}
                                     onChangeText={str => this.setState({ Lgo_type: str })}
@@ -527,7 +655,7 @@ export class LocalOrganizationScreen extends Component {
                                 />
                             </Item>
                             <Item stackedLabel>
-                                <Label>กิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                <Label>กิจกรรมด้านเด็ก<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
                                     style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
                                     rowSpan={4}
@@ -539,7 +667,7 @@ export class LocalOrganizationScreen extends Component {
                                 />
                             </Item>
                             <Item stackedLabel>
-                                <Label>กิจกรรม<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                <Label>กิจกรรมด้านสุขภาพ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
                                     style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
                                     rowSpan={4}
@@ -550,6 +678,57 @@ export class LocalOrganizationScreen extends Component {
                                     placeholder="กิจกรรมหรือแนวทางการส่งเสริมการปกป้องและคุ้มครองประชาชนด้านสุขภาพแบบองค์รวมที่ผ่านมาของ อปท."
                                 />
                             </Item>
+                            <Item stackedLabel>
+                                <Label>ภารกิจ และบุคลากรที่เกี่ยวข้อง <Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                            </Item>
+                            {this.state.name_quest.map((elemant, i) =>
+                                <View style={{ borderColor: "#ff8080", borderWidth: 1, margin: 2 }}>
+                                    <Item stackedLabel>
+                                        <Label>{elemant}:</Label>
+                                        <Item fixedLabel>
+                                            <Label>ฝ่ายงานที่เกี่ยวข้อง<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                            <Input
+                                                style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                                value={this.getDataQuest(i, 0)}
+                                                onChangeText={str => this.setQuest(i, 0, str)}
+                                            />
+                                        </Item>
+                                        <Item fixedLabel>
+                                            <Label>จำนวนบุคลากร<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                            <Input
+                                                style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                                value={this.getDataQuest(i, 1)}
+                                                keyboardType='numeric'
+                                                onChangeText={str => this.setQuest(i, 1, str)}
+                                            />
+                                        </Item>
+                                        <Item stackedLabel>
+                                            <Label>นโยบาย<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                            <Textarea
+                                                style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                                rowSpan={4}
+                                                value={this.getDataQuest(i, 2)}
+                                                onChangeText={str =>
+                                                    this.setQuest(i, 2, str)
+                                                }
+                                                placeholder="ภารกิจ	ฝ่ายงานที่เกี่ยวข้อง	จำนวนบุคลากร	นโยบาย/ แผนงานขององค์กรปกครองส่วนท้องถิ่นที่เกี่ยวข้อง	โครงการ/กิจกรรมที่ผ่านมา"
+                                            />
+                                        </Item>
+                                        <Item stackedLabel>
+                                            <Label>โครงการ/กิจกรรมที่ผ่านมา<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                            <Textarea
+                                                style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                                rowSpan={4}
+                                                value={this.getDataQuest(i, 3)}
+                                                onChangeText={str =>
+                                                    this.setQuest(i, 3, str)
+                                                }
+                                                placeholder="โครงการ/กิจกรรมที่ผ่านมา"
+                                            />
+                                        </Item>
+                                    </Item>
+                                </View>
+                            )}
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                             {isEmptyValues([map_image_uri]) === false ?
@@ -597,7 +776,7 @@ export class LocalOrganizationScreen extends Component {
                         <Icon name="enviroment" type="AntDesign"></Icon>
                         <Text>
                             เลือกพิกัดที่อยู่ตอนนี้
-                          </Text>
+                        </Text>
 
                     </TouchableOpacity>
                 </Footer>

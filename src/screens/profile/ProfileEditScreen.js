@@ -240,9 +240,10 @@ export class ProfileEditScreen extends Component {
                                 style={{ left: -56 }}
                                 selectedValue={Sex}
                                 onValueChange={str => this.setState({ Sex: str })}>
-                                <Picker.Item label="ชาย" value="ชาย" />
-                                <Picker.Item label="หญิง" value="หญิง" />
-                                <Picker.Item label="อื่นๆ" value="อื่นๆ" />
+                                 <Picker.Item key="0" label="เลือก" value="" />
+                                <Picker.Item key="1" label="ชาย" value="ชาย" />
+                                <Picker.Item key="2"  label="หญิง" value="หญิง" />
+                                <Picker.Item key="3" label="อื่นๆ" value="อื่นๆ" />
                             </Picker>
                         </Item>
                         <Item fixedLabel style={{ marginTop: 5 }}>

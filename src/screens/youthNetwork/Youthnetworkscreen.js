@@ -46,6 +46,7 @@ export class Youthnetworkscreen extends Component {
             Yn_name: '',
             Yn_description: '',
             Yn_phone_number: '',
+            Relevant: ''
         }
     }
 
@@ -67,6 +68,7 @@ export class Youthnetworkscreen extends Component {
                 Yn_name,
                 Yn_description,
                 Yn_phone_number,
+                Relevant
             } = doc.data();
             if (!isEmptyValue(Position)) {
                 maps_marker.push(
@@ -203,7 +205,7 @@ export class Youthnetworkscreen extends Component {
             const { map_image_uri, Map_image_URL, new_upload_image, Map_image_name, position } = this.state;
             const { Yn_name,
                 Yn_description,
-                Yn_phone_number, } = this.state;
+                Yn_phone_number, Relevant } = this.state;
             let temp_image_URL = "";
             let new_id = '';
             if (!isEmptyValue(this.state.edit_ID)) {
@@ -220,6 +222,7 @@ export class Youthnetworkscreen extends Component {
                 if (
                     !isEmptyValue(Yn_name) &&
                     !isEmptyValue(Yn_description) &&
+                    !isEmptyValue(Relevant) &&
                     !isEmptyValue(Yn_phone_number)
                 ) {
                     if (isEmptyValue(this.state.edit_ID)) {
@@ -239,6 +242,7 @@ export class Youthnetworkscreen extends Component {
                                 Yn_name,
                                 Yn_description,
                                 Yn_phone_number,
+                                Relevant
 
                             })
                             .then(result => {
@@ -267,6 +271,7 @@ export class Youthnetworkscreen extends Component {
                                 Yn_name,
                                 Yn_description,
                                 Yn_phone_number,
+                                Relevant
                             })
                             .then(result => {
                                 Alert.alert('อัพเดตสำเร็จ');
@@ -309,6 +314,7 @@ export class Youthnetworkscreen extends Component {
             Yn_name: '',
             Yn_description: '',
             Yn_phone_number: '',
+            Relevant: ''
 
         })
     }
@@ -325,6 +331,7 @@ export class Youthnetworkscreen extends Component {
             Yn_name: data.Yn_name,
             Yn_description: data.Yn_description,
             Yn_phone_number: data.Yn_phone_number,
+            Relevant: data.Relevant
         })
     }
     onDelete = async (data) => {
@@ -348,7 +355,8 @@ export class Youthnetworkscreen extends Component {
         const { loading, step, maps_data, map_image_uri, Map_image_URL } = this.state;
         const { Yn_name,
             Yn_description,
-            Yn_phone_number } = this.state;
+            Yn_phone_number,
+            Relevant } = this.state;
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -496,6 +504,19 @@ export class Youthnetworkscreen extends Component {
                                 />
 
                             </Item>
+                            <Item stackedLabel>
+                                <Label>บทบาทการทำงาน<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                <Textarea
+                                    style={{ backgroundColor: '#ffffff', borderRadius: 5, minWidth: '100%', maxWidth: '100%' }}
+                                    rowSpan={4}
+                                    value={Relevant}
+                                    onChangeText={str =>
+                                        this.setState({ Relevant: str })
+                                    }
+                                    placeholder="บทบาทการทำงานร่วมกับ อปท"
+                                />
+
+                            </Item>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                             {isEmptyValues([map_image_uri]) === false ?
@@ -543,7 +564,7 @@ export class Youthnetworkscreen extends Component {
                         <Icon name="enviroment" type="AntDesign"></Icon>
                         <Text>
                             เลือกพิกัดที่อยู่ตอนนี้
-                          </Text>
+                        </Text>
 
                     </TouchableOpacity>
                 </Footer>

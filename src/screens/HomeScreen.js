@@ -157,6 +157,16 @@ export class HomeScreen extends Component {
                                         <Text style={{ fontSize: 16, textAlign: 'center' }}>
                                             AY</Text>
                                     </TouchableOpacity>
+                                    < TouchableOpacity
+                                        style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                        onPress={() => this.props.navigation.navigate(routeName.Dashboard)}
+                                    >
+                                        <Image
+                                            source={require('../assets/report.png')}
+                                            style={{ width: 75, height: 75 }}></Image>
+                                        <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                            สรุป</Text>
+                                    </TouchableOpacity>
                                 </Col>
                                 <Col style={{ height: '100%', padding: 5 }}>
                                     <TouchableOpacity
@@ -211,17 +221,17 @@ export class HomeScreen extends Component {
                                         <Text style={{ fontSize: 16, textAlign: 'center' }}>
                                             เครือข่าย</Text>
                                     </TouchableOpacity>
-
                                     < TouchableOpacity
                                         style={{ alignItems: 'center', padding: 2, height: 120 }}
-                                        onPress={() => this.props.navigation.navigate(routeName.Dashboard)}
+                                        onPress={() => this.props.navigation.navigate(routeName.LocalDisease)}
                                     >
                                         <Image
-                                            source={require('../assets/report.png')}
+                                            source={require('../assets/main/virus.png')}
                                             style={{ width: 75, height: 75 }}></Image>
                                         <Text style={{ fontSize: 16, textAlign: 'center' }}>
-                                            สรุป</Text>
+                                            ข้อมูลโรค</Text>
                                     </TouchableOpacity>
+
                                 </Col>
                             </Grid>
                         </View>

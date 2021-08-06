@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
 import {
-    Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Textarea, FooterTab, Picker
+    Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Textarea, FooterTab, Picker, Right, Left, Radio
 } from 'native-base';
 import { connect } from 'react-redux';
 import { addProfile } from '../../redux/Reducer';
@@ -15,7 +15,7 @@ import themeStyle from '../../styles/theme.style';
 import { TableName } from '../../database/TableName';
 import Firestore from '@react-native-firebase/firestore'
 import { isEmptyValue } from '../../components/Method';
-const tbMain = Firestore().collection(TableName.Religions);
+const tbMain = Firestore().collection(TableName.LocalCalendar);
 const tbname = TableName.Religions;
 export class LocalCalendarScreen extends Component {
     constructor(props) {
@@ -31,6 +31,7 @@ export class LocalCalendarScreen extends Component {
             showMouth1: [],
             showMouth2: [],
             Name_activity: '',
+            Attribute: "",
             //getuser
             selected: 1,
             loading: false,
@@ -44,7 +45,7 @@ export class LocalCalendarScreen extends Component {
         const dataCalendar1 = [];
         const dataCalendar2 = [];
         querySnapshot.forEach((doc) => {
-            const { Name_activity, Month1, Month2, Type_activity } = doc.data();
+            const { Name_activity, Month1, Month2, Type_activity, Attribute } = doc.data();
             const mn1 = parseInt(Month1, 10);
             const mn2 = parseInt(Month2, 10);
             if (Type_activity === 'เศรษฐกิจ') {
@@ -55,7 +56,8 @@ export class LocalCalendarScreen extends Component {
                     Month2: this.state.mouth[mn2 - 1],
                     Month1db: Month1,
                     Month2db: Month2,
-                    Type_activity
+                    Type_activity,
+                    Attribute
                 });
             } else {
                 dataCalendar2.push({
@@ -65,7 +67,8 @@ export class LocalCalendarScreen extends Component {
                     Month2: this.state.mouth[mn2 - 1],
                     Month1db: Month1,
                     Month2db: Month2,
-                    Type_activity
+                    Type_activity,
+                    Attribute
                 });
             }
         });
@@ -84,7 +87,7 @@ export class LocalCalendarScreen extends Component {
     }
     edit(data) {
         this.setState({ loading: true });
-        const { Name_activity, Type_activity } = data;
+        const { Name_activity, Type_activity, Attribute } = data;
         const { mouth } = this.state;
         const Month1 = parseInt(data.Month1db, 10);
         const Month2 = parseInt(data.Month2db, 10);
@@ -94,16 +97,16 @@ export class LocalCalendarScreen extends Component {
         }
         console.log(data)
         this.setState({
-            Name_activity, Month1, Month2, Type_activity, edit_ID: data.ID, loading: false, showMouth2, step: 'add'
+            Name_activity, Month1, Month2, Type_activity, edit_ID: data.ID, loading: false, showMouth2, step: 'add', Attribute
         })
     }
     cancelEdit = (e) => {
         this.setState({
-            Name_activity: '', Month1: '', Month2: '', Type_activity: '', edit_ID: '',
+            Name_activity: '', Month1: '', Month2: '', Type_activity: '', edit_ID: '', Attribute: '', step: 'table',
         })
     }
     componentDidMount() {
-        tbMain.onSnapshot(this.onCollectionUpdate)
+        tbMain.where('Area_ID', '==', this.state.Area.ID).onSnapshot(this.onCollectionUpdate)
         this.genrateMonth(0, 0);
     }
     genrateMonth(str, d) {
@@ -142,10 +145,10 @@ export class LocalCalendarScreen extends Component {
     onSubmit = e => {
         e.preventDefault()
         this.setState({ loading: true });
-        const { Name_activity, Month1, Month2, uid, Type_activity, Name, edit_ID,
+        const { Name_activity, Month1, Month2, uid, Type_activity, Name, edit_ID, Attribute,
             Area_ID } = this.state;
 
-        if (Name_activity === '' || Month1 === '' || Month2 === '' || Type_activity === '') {
+        if (Name_activity === '' || Month1 === '' || Month2 === '' || Type_activity === '' || Attribute === '') {
             this.setState({
                 loading: false
             });
@@ -156,11 +159,11 @@ export class LocalCalendarScreen extends Component {
                     Area_ID: this.state.Area.ID,
                     Update_by_ID: this.state.uid,
                     Update_date: Firestore.Timestamp.now(),
-                    Name_activity, Type_activity
+                    Name_activity, Type_activity, Attribute
                     , Month1, Month2,
                 }).then((docRef) => {
                     this.setState({
-                        Name_activity: "", Month1: "", Month2: "", Type_activity: '',
+                        Name_activity: "", Month1: "", Month2: "", Type_activity: '', Attribute: '',
                         edit_ID: '', loading: false
                     });
                     Alert.alert("บันทึกข้อมูลสำเร็จ");
@@ -179,12 +182,12 @@ export class LocalCalendarScreen extends Component {
                     Update_by_ID: this.state.uid,
                     Create_date: Firestore.Timestamp.now(),
                     Update_date: Firestore.Timestamp.now(),
-                    Name_activity, Type_activity
+                    Name_activity, Type_activity, Attribute
                     , Month1, Month2,
                 }).then((docRef) => {
                     this.setState({
                         Name_activity: "", Month1: "", Month2: "", Type_activity: '',
-                        edit_ID: '', loading: false
+                        edit_ID: '', loading: false, Attribute: ''
                     });
                     Alert.alert("บันทึกข้อมูลสำเร็จ");
 
@@ -204,7 +207,7 @@ export class LocalCalendarScreen extends Component {
         this.props.navigation.goBack()
     }
     render() {
-        const { Month1, Month2, Name_activity, Type_activity, } = this.state;
+        const { Month1, Month2, Name_activity, Type_activity, Attribute } = this.state;
         const { step } = this.state;
         return (
             <Container style={{ backgroundColor: themeStyle.background }}>
@@ -271,16 +274,33 @@ export class LocalCalendarScreen extends Component {
                             </Item>
                             <Item fixedLabel >
                                 <Label>ประเภท</Label>
-                                <Picker
-                                    mode="dropdown"
-                                    placeholder="เลือกประเภทกิจกรรม"
-                                    iosIcon={<Icon name="down" type="AntDesign"></Icon>}
-                                    selectedValue={Type_activity}
-                                    onValueChange={str => this.setState({ Type_activity: str })}
-                                >
-                                    <Picker.Item key="1" label="วัฒนธรรมประเพณี" value="วัฒนธรรมประเพณี" />
-                                    <Picker.Item key="2" label="เศรษฐกิจ" value="เศรษฐกิจ" />
-                                </Picker>
+                                <View style={{ flexDirection: "row" }}>
+                                    <TouchableOpacity onPress={() => this.setState({ Type_activity: 'วัฒนธรรมประเพณี' })} style={{ flexDirection: "row" }}>
+                                        <Text>วัฒนธรรมประเพณี</Text>
+                                        <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Type_activity === "วัฒนธรรมประเพณี" ? true : false}> </Radio>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.setState({ Type_activity: 'เศรษฐกิจ' })} style={{ flexDirection: "row" }}>
+                                        <Text>เศรษฐกิจ</Text>
+                                        <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Type_activity === "เศรษฐกิจ" ? true : false} ></Radio>
+                                    </TouchableOpacity>
+
+
+                                </View>
+                            </Item>
+                            <Item fixedLabel style={{ marginTop: 5 }}>
+                                <Label>เลือกลักษณะ</Label>
+                                <View style={{ flexDirection: "row" }}>
+                                    <TouchableOpacity onPress={() => this.setState({ Attribute: 'ทั่วไป' })} style={{ flexDirection: "row" }}>
+                                        <Text>ทั่วไป</Text>
+                                        <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Attribute === "ทั่วไป" ? true : false}> </Radio>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.setState({ Attribute: 'เฉพาะถิ่น' })} style={{ flexDirection: "row" }}>
+                                        <Text>เฉพาะถิ่น</Text>
+                                        <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Attribute === "เฉพาะถิ่น" ? true : false} ></Radio>
+                                    </TouchableOpacity>
+
+
+                                </View>
                             </Item>
                             <Item fixedLabel >
                                 <Label>เดือนที่เริ่ม</Label>

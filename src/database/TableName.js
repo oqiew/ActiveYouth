@@ -11,5 +11,7 @@ export const TableName = {
     LocalMaps: 'LocalMaps',
     LocalCalendar: 'LocalCalendar',
     AYs: 'AYs',
-    Alerts: 'Alerts'
+    Alerts: 'Alerts',
+    LocalDisease: 'LocalDisease',
+    AYDisease: 'AYDisease'
 }

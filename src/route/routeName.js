@@ -19,6 +19,7 @@ export const routeName = {
     AY: 'AY',
     Dashboard: 'Dashboard',
     DashboardGust: 'DashboardGust',
-    GuestHome: 'GuestHome'
+    GuestHome: 'GuestHome',
+    LocalDisease: 'LocalDisease'
 
 }

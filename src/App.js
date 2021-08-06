@@ -33,6 +33,7 @@ import DashboardScreen from './screens/dashboard/DashboardScreen';
 import DashboardGuestScreen from './screens/guest/DashboardScreen';
 import GuestHomeScreen from './screens/GuestHomeScreen';
 import ProfileEditScreen from './screens/profile/ProfileEditScreen';
+import LocalDisease from './screens/localDisease/LocalDisease';
 
 
 
@@ -155,6 +156,11 @@ function App() {
                     name={routeName.DashboardGust}
                     component={DashboardGuestScreen}
                     options={{ title: 'DashboardGust', headerShown: false, }}
+                />
+                <Stack.Screen
+                    name={routeName.LocalDisease}
+                    component={LocalDisease}
+                    options={{ title: 'LocalDisease', headerShown: false, }}
                 />
 
             </Stack.Navigator>

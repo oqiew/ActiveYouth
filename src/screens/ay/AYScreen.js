@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Image, TouchableOpacity, Alert, Platform, StyleSheet, ScrollView } from 'react-native';
 import {
-    Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Textarea, Radio
+    Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Textarea, Radio, Picker
 } from 'native-base';
 import { connect } from 'react-redux';
 import { addProfile } from '../../redux/Reducer';
@@ -20,6 +20,7 @@ import { TableName } from '../../database/TableName';
 import Firestore from '@react-native-firebase/firestore'
 import user from '../../assets/map/user.png'
 const tbMain = Firestore().collection(TableName.AYs);
+const tbAYDisease = Firestore().collection(TableName.AYDisease);
 const tbname = TableName.AYs;
 export class AYScreen extends Component {
     constructor(props) {
@@ -46,11 +47,12 @@ export class AYScreen extends Component {
             Y_name: '',
             Y_description: '',
             Y_type: 'normal',
-            Y_family: '',
+            Y_family: "0",
             Y_family_stay: '',
             Y_role: '',
             Y_concept: '',
             Y_family_career: '',
+            Y_family_sub_career: '',
             Y_family_status: '',
             Y_covid19: '',
             Y_alcohol: '',
@@ -58,12 +60,49 @@ export class AYScreen extends Component {
             Y_alcohol_cigarette: '',
             Y_attitude: '',
             Y_family_activity: '',
+
+            Income1: "0",
+            Income2: "0",
+            Income3: "0",
+            Income4: "0",
+            //disease
+            AY_ID: '',
+            edit_disease_ID: '',
+            Name_disease: '',
+            Gender_disease: '',
+            Age_disease: '',
+            Frequency_of_alcohol_disease: '',
+            Alcohol_consumption_disease: '',
+            Smoking_disease: '',
+            Smoking_type_disease: '',
+            Create_date: '',
+            Update_date: '',
+            Update_by_ID: '',
+            diseases: [],
+
         }
     }
 
     componentDidMount() {
         tbMain.where('Area_ID', '==', this.state.Area.ID)
             .onSnapshot(this.ListMark);
+
+
+    }
+    onCollectionUpdate = (querySnapshot) => {
+        const diseases = [];
+        querySnapshot.forEach((doc) => {
+            const { Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+                Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease, AY_ID, Create_date, Update_date } = doc.data();
+            diseases.push({
+                ID: doc.id,
+                Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+                Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease, AY_ID, Create_date, Update_date
+            });
+        });
+        this.setState({
+            diseases
+        });
     }
     ListMark = querySnapshot => {
         this.setState({
@@ -77,7 +116,7 @@ export class AYScreen extends Component {
             const {
                 Map_image_URL, Position,
                 Y_name, Y_description, Y_type, Y_family, Y_family_stay,
-                Y_role, Y_concept, Y_family_career, Y_family_status,
+                Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
                 Y_attitude, Y_family_activity,
             } = doc.data();
@@ -213,9 +252,9 @@ export class AYScreen extends Component {
             loading: true
         })
         try {
-            const { map_image_uri, Map_image_URL, new_upload_image, Map_image_name, position } = this.state;
+            const { map_image_uri, Map_image_URL, new_upload_image, Map_image_name, position, Income1, Income2, Income3, Income4 } = this.state;
             const { Y_name, Y_description, Y_type, Y_family, Y_family_stay,
-                Y_role, Y_concept, Y_family_career, Y_family_status,
+                Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
                 Y_attitude, Y_family_activity, } = this.state;
             let temp_image_URL = "";
@@ -234,6 +273,7 @@ export class AYScreen extends Component {
             } else {
                 temp_image_URL = Map_image_URL
             }
+
             if (!isEmptyValue(temp_image_URL)) {
                 if (
                     !isEmptyValue(Y_name) &&
@@ -263,13 +303,17 @@ export class AYScreen extends Component {
                                 Map_image_name: new_id,
                                 Position: position,
                                 Y_name, Y_description, Y_type, Y_family, Y_family_stay,
-                                Y_role, Y_concept, Y_family_career, Y_family_status,
+                                Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
                                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
                                 Y_attitude, Y_family_activity, Ay_ID
 
                             })
-                            .then(result => {
+                            .then((result) => {
                                 Alert.alert('บันทึกสำเร็จ');
+                                this.setState({
+                                    AY_ID: result.id,
+                                    step: 'addDisease'
+                                })
                                 this.onCancel();
                             })
                             .catch(error => {
@@ -292,12 +336,15 @@ export class AYScreen extends Component {
                                 Map_image_name: new_id,
                                 Position: position,
                                 Y_name, Y_description, Y_type, Y_family, Y_family_stay,
-                                Y_role, Y_concept, Y_family_career, Y_family_status,
+                                Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
                                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
                                 Y_attitude, Y_family_activity, Ay_ID
                             })
-                            .then(result => {
+                            .then((result) => {
                                 Alert.alert('อัพเดตสำเร็จ');
+                                this.setState({
+                                    AY_ID: result.id,
+                                })
                                 this.onCancel();
                             })
                             .catch(error => {
@@ -321,6 +368,7 @@ export class AYScreen extends Component {
                 });
                 alert('กรุณาอัพโหลดรูปภาพ');
             }
+
         } catch (error) {
             console.log(error);
         }
@@ -337,7 +385,7 @@ export class AYScreen extends Component {
             Y_name: '',
             Y_description: '',
             Y_type: 'normal',
-            Y_family: '',
+            Y_family: "0",
             Y_family_stay: '',
             Y_role: '',
             Y_concept: '',
@@ -349,11 +397,17 @@ export class AYScreen extends Component {
             Y_alcohol_cigarette: '',
             Y_attitude: '',
             Y_family_activity: '',
+            Income1: "0",
+            Income2: "0",
+            Income3: "0",
+            Income4: "0",
 
         })
     }
     onEdit = (data) => {
+        tbAYDisease.where('AY_ID', '==', data.ID).onSnapshot(this.onCollectionUpdate);
         this.setState({
+            AY_ID: data.ID,
             Map_image_URL: data.Map_image_URL,
             new_upload_image: false,
             Map_image_name: data.Map_image_name,
@@ -370,6 +424,7 @@ export class AYScreen extends Component {
             Y_role: data.Y_role,
             Y_concept: data.Y_concept,
             Y_family_career: data.Y_family_career,
+            Y_family_sub_career: data.Y_family_sub_career,
             Y_family_status: data.Y_family_status,
             Y_covid19: data.Y_covid19,
             Y_alcohol: data.Y_alcohol,
@@ -377,13 +432,15 @@ export class AYScreen extends Component {
             Y_alcohol_cigarette: data.Y_alcohol_cigarette,
             Y_attitude: data.Y_attitude,
             Y_family_activity: data.Y_family_activity,
+            Income1: data.Income1,
+            Income2: data.Income2,
+            Income3: data.Income3,
+            Income4: data.Income4,
         })
     }
     onDelete = async (data) => {
-
         const resultImage = await deleteImage(data.Map_image_URL);
         const resultData = await deleteData(tbname, data.ID);
-
         if (!resultImage.status) {
             console.log(resultImage.message)
         } else {
@@ -396,12 +453,177 @@ export class AYScreen extends Component {
         }
 
     }
+    onSubmitDisease = (e) => {
+        e.preventDefault()
+        this.setState({ loading: true });
+        const { Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+            Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease, edit_disease_ID, AY_ID } = this.state;
+
+        if (Name_disease === '' || Gender_disease === '' || Age_disease === '' ||
+            Frequency_of_alcohol_disease === '' || Alcohol_consumption_disease === '' ||
+            Smoking_disease === '' || Smoking_type_disease === '') {
+            this.setState({
+                loading: false
+            });
+            Alert.alert("กรุณากรอกข้อมูลให้ครบ");
+        } else {
+            if (!isEmptyValue(edit_disease_ID)) {
+                tbAYDisease.doc(edit_disease_ID).set({
+                    AY_ID,
+                    Update_by_ID: this.state.uid,
+                    Update_date: Firestore.Timestamp.now(),
+                    Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+                    Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease
+                }).then((docRef) => {
+                    tbAYDisease.where('AY_ID', '==', AY_ID).onSnapshot(this.onCollectionUpdate);
+                    this.setState({
+                        Name_disease: '',
+                        Gender_disease: '',
+                        Age_disease: '',
+                        Frequency_of_alcohol_disease: '',
+                        Alcohol_consumption_disease: '',
+                        Smoking_disease: '',
+                        Smoking_type_disease: '',
+                        Create_date: '',
+                        Update_date: '',
+                        edit_disease_ID: '',
+                        loading: false,
+                    });
+                    Alert.alert("บันทึกข้อมูลสำเร็จ");
+
+                }).catch((error) => {
+                    this.setState({
+                        loading: false
+                    });
+                    Alert.alert("บันทึกข้อมูลไม่สำเร็จ");
+                    console.error("Error adding document: ", error);
+                });
+
+            } else {
+                tbAYDisease.add({
+                    AY_ID,
+                    Update_by_ID: this.state.uid,
+                    Create_date: Firestore.Timestamp.now(),
+                    Update_date: Firestore.Timestamp.now(),
+                    Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+                    Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease
+                }).then((docRef) => {
+                    tbAYDisease.where('AY_ID', '==', AY_ID).onSnapshot(this.onCollectionUpdate);
+                    this.setState({
+                        Name_disease: '',
+                        Gender_disease: '',
+                        Age_disease: '',
+                        Frequency_of_alcohol_disease: '',
+                        Alcohol_consumption_disease: '',
+                        Smoking_disease: '',
+                        Smoking_type_disease: '',
+                        Create_date: '',
+                        Update_date: '',
+                        edit_disease_ID: '',
+                        loading: false,
+                    });
+                    Alert.alert("บันทึกข้อมูลสำเร็จ");
+
+                }).catch((error) => {
+                    this.setState({
+                        loading: false
+                    });
+                    Alert.alert("บันทึกข้อมูลไม่สำเร็จ");
+                    console.error("Error adding document: ", error);
+                });
+
+            }
+        }
+    }
+    onCancelDisease() {
+        this.setState({
+            edit_disease_ID: '',
+            Name_disease: '',
+            Gender_disease: '',
+            Age_disease: '',
+            Frequency_of_alcohol_disease: '',
+            Alcohol_consumption_disease: '',
+            Smoking_disease: '',
+            Smoking_type_disease: '',
+            step: 'add'
+        })
+    }
+    editDisease(data) {
+        this.setState({ loading: true });
+        const { Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+            Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease } = data;
+
+        this.setState({
+            Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+            Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease, edit_disease_ID: data.ID, loading: false, step: 'addDisease'
+        })
+    }
+    deleteDisease(id) {
+        tbAYDisease.doc(id).delete().then(() => {
+            console.log("Document successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+    }
+
+    check_income(index, data) {
+        const { Income1, Income2, Income3, Income4, Y_family } = this.state;
+        let temp_income1 = parseInt(Income1, 10);
+        let temp_income2 = parseInt(Income2, 10);
+        let temp_income3 = parseInt(Income3, 10);
+        let temp_income4 = parseInt(Income4, 10);
+        let number = isEmptyValue(data) ? 0 : parseInt(data, 10);
+        let temp_family = parseInt(Y_family, 10);
+        if ((temp_income1 + temp_income2 + temp_income3 + temp_income4 + data) <= temp_family) {
+            if (index === 1) {
+                temp_income1 = number;
+            }
+            if (index === 2) {
+                temp_income2 = number;
+            }
+            if (index === 3) {
+                temp_income3 = number;
+            }
+            if (index === 4) {
+                temp_income4 = number;
+            }
+            this.setState({
+                Income1: temp_income1 + "",
+                Income2: temp_income2 + "",
+                Income3: temp_income3 + "",
+                Income4: temp_income4 + ""
+            })
+        } else {
+            if (index === 1) {
+                temp_income1 = 0;
+            }
+            if (index === 2) {
+                temp_income2 = 0;
+            }
+            if (index === 3) {
+                temp_income3 = 0;
+            }
+            if (index === 4) {
+                temp_income4 = 0;
+            }
+            this.setState({
+                Income1: temp_income1 + "",
+                Income2: temp_income2 + "",
+                Income3: temp_income3 + "",
+                Income4: temp_income4 + ""
+            })
+        }
+
+    }
     render() {
         const { loading, step, maps_data, map_image_uri, Map_image_URL } = this.state;
-        const { Y_name, Y_description, Y_type, Y_family, Y_family_stay,
-            Y_role, Y_concept, Y_family_career, Y_family_status,
+        const { Y_name, Y_description, Y_type, Y_family, Y_family_stay, Income1, Income2, Income3, Income4,
+            Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
             Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
             Y_attitude, Y_family_activity, } = this.state;
+        const { Name_disease, Gender_disease, Age_disease, Frequency_of_alcohol_disease,
+            Alcohol_consumption_disease, Smoking_disease, Smoking_type_disease } = this.state;
+
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -552,10 +774,10 @@ export class AYScreen extends Component {
                                 <Label>สมาชิกครอบครัว<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Input
                                     keyboardType='numeric'
-                                    placeholder="จำนวนสมาชิกทั้งหมดในครอบครัว"
+                                    placeholder="จำนวนสมาชิกทั้งหมด"
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
                                     value={Y_family}
-                                    onChangeText={str => this.setState({ Y_family: str })}
+                                    onChangeText={str => this.setState({ Y_family: str, })}
                                 />
                             </Item>
                             <Item fixedLabel>
@@ -568,6 +790,50 @@ export class AYScreen extends Component {
                                     onChangeText={str => this.setState({ Y_family_stay: str })}
                                 />
                             </Item>
+
+                            {parseInt(Y_family, 10) > 0 && <Item stackedLabel>
+                                <Label>รายได้คนในครอบครัว/ต่อคน/ต่อเดือน<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                <Item fixedLabel>
+                                    <Label>2763บาท<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                    <Input
+                                        keyboardType='numeric'
+                                        placeholder="จำนวนคน"
+                                        style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                        value={Income1}
+                                        onChangeText={str => this.check_income(1, str)}
+                                    />
+                                </Item>
+                                <Item fixedLabel>
+                                    <Label>5346บาท<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                    <Input
+                                        keyboardType='numeric'
+                                        placeholder="จำนวนคน"
+                                        style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                        value={Income2}
+                                        onChangeText={str => this.check_income(2, str)}
+                                    />
+                                </Item>
+                                <Item fixedLabel>
+                                    <Label>6531บาท<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                    <Input
+                                        keyboardType='numeric'
+                                        placeholder="จำนวนคน"
+                                        style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                        value={Income3}
+                                        onChangeText={str => this.check_income(3, str)}
+                                    />
+                                </Item>
+                                <Item fixedLabel>
+                                    <Label>มากกว่า6531บาท<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                    <Input
+                                        keyboardType='numeric'
+                                        placeholder="จำนวนคน"
+                                        style={{ backgroundColor: "#ffffff", borderRadius: 5 }}
+                                        value={Income4}
+                                        onChangeText={str => this.check_income(4, str)}
+                                    />
+                                </Item>
+                            </Item>}
                             <Item stackedLabel>
                                 <Label>บทบาท<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
@@ -577,7 +843,7 @@ export class AYScreen extends Component {
                                     onChangeText={str =>
                                         this.setState({ Y_role: str })
                                     }
-                                    placeholder="บทบาทของสมาชิกในครอบครัว"
+                                    placeholder="บทบาท หน้าที่ ของสมาชิกในครอบครัว"
                                 />
                             </Item>
                             <Item stackedLabel>
@@ -593,7 +859,7 @@ export class AYScreen extends Component {
                                 />
                             </Item>
                             <Item stackedLabel>
-                                <Label>อาชีพของครอบครัว<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                <Label>อาชีพหลักของครอบครัว<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
                                 <Textarea
                                     style={{ backgroundColor: "#ffffff", borderRadius: 5, minWidth: '100%' }}
                                     rowSpan={4}
@@ -601,7 +867,20 @@ export class AYScreen extends Component {
                                     onChangeText={str =>
                                         this.setState({ Y_family_career: str })
                                     }
-                                    placeholder="ลักษณะการทำอาชีพของครอบครัว หรือ ผู้ปกครอง"
+                                    placeholder="ลักษณะการทำอาชีพหลักของครอบครัว หรือ ผู้ปกครอง"
+                                />
+
+                            </Item>
+                            <Item stackedLabel>
+                                <Label>อาชีพรองของครอบครัว :</Label>
+                                <Textarea
+                                    style={{ backgroundColor: "#ffffff", borderRadius: 5, minWidth: '100%' }}
+                                    rowSpan={4}
+                                    value={Y_family_sub_career}
+                                    onChangeText={str =>
+                                        this.setState({ Y_family_sub_career: str })
+                                    }
+                                    placeholder="ลักษณะการทำอาชีพรองของครอบครัว หรือ ผู้ปกครอง"
                                 />
 
                             </Item>
@@ -689,6 +968,52 @@ export class AYScreen extends Component {
                                     placeholder="กิจกรรมในครอบครัว (ตารางเวลา)"
                                 />
                             </Item>
+                            {this.state.AY_ID !== '' &&
+                                <TouchableOpacity
+                                    onPress={() => this.setState({ step: 'addDisease' })}
+                                    style={{ backgroundColor: '#bfbfbf', margin: 2, padding: 2, borderRadius: 5 }}>
+                                    <Text>เพิ่มข้อมูลโรค</Text>
+                                </TouchableOpacity>
+                            }
+                            {this.state.diseases.length > 0 &&
+                                <>
+
+                                    <Item stackedLabel >
+                                        <Label>รายการ<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                                        {this.state.diseases.map((element, i) =>
+                                            <View style={{
+                                                margin: 5, height: 250,
+                                                backgroundColor: '#ddffff', borderRadius: 15, padding: 20,
+                                                flexDirection: 'row'
+                                            }}>
+
+                                                <View style={{ width: '90%', flexDirection: "column" }}>
+                                                    <View style={{ height: '30%' }}>
+                                                        <Text>{element.Name_disease}</Text>
+                                                    </View>
+                                                    <View style={{ flexDirection: 'column', borderTopWidth: 1, borderColor: "#d3d3d3" }}>
+                                                        <Text>เพศ {element.Gender_disease}</Text>
+                                                        <Text>อายุ {element.Age_disease}</Text>
+                                                        <Text>ความถี่การดื่มสุรา {element.Frequency_of_alcohol_disease}</Text>
+                                                        <Text>ปริมาณการดื่มสุรา {element.Alcohol_consumption_disease}</Text>
+                                                        <Text>การสูบบุหรี่ {element.Smoking_disease}</Text>
+                                                        <Text>ประเภทการสูบบุหรี่ {element.Smoking_type_disease}</Text>
+                                                    </View>
+                                                </View>
+                                                <View style={{ width: '10%', justifyContent: 'space-around' }}>
+                                                    <TouchableOpacity onPress={this.editDisease.bind(this, element)}>
+                                                        <Image source={require('../../assets/pencil.png')} style={{ width: 25, height: 25, justifyContent: 'center' }}></Image>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={this.deleteDisease.bind(this, element.ID)}>
+                                                        <Image source={require('../../assets/trash_can.png')} style={{ width: 25, height: 25, justifyContent: 'center' }}></Image>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )}
+                                    </Item>
+                                </>
+                            }
+
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                             {isEmptyValues([map_image_uri]) === false ?
@@ -729,45 +1054,137 @@ export class AYScreen extends Component {
                         </View>
                     </Content>
                 }
-                <Footer style={{ backgroundColor: '#ffffff' }}>
-                    <TouchableOpacity
-                        style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
-                        onPress={this.findCoordinates}>
-                        <Icon name="enviroment" type="AntDesign"></Icon>
-                        <Text>
-                            เลือกพิกัดที่อยู่ตอนนี้
-                          </Text>
+                {step === 'addDisease' &&
+                    <Content contentContainerStyle={[mainStyle.background, { height: "100%" }]}>
+                        <Item fixedLabel >
+                            <Label>ชื่อโรค</Label>
+                            <Input value={Name_disease}
+                                onChangeText={str => this.setState({ Name_disease: str })} placeholder="ชื่อโรค" />
+                        </Item>
+                        <Item fixedLabel >
+                            <Label>เพศ</Label>
+                            <View style={{ flexDirection: "row" }}>
+                                <TouchableOpacity onPress={() => this.setState({ Gender_disease: 'ชาย' })} style={{ flexDirection: "row" }}>
+                                    <Text>ชาย</Text>
+                                    <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Gender_disease === "ชาย" ? true : false}> </Radio>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.setState({ Gender_disease: 'หญิง' })} style={{ flexDirection: "row" }}>
+                                    <Text>หญิง</Text>
+                                    <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Gender_disease === "หญิง" ? true : false} ></Radio>
+                                </TouchableOpacity>
 
-                    </TouchableOpacity>
-                </Footer>
-                <Footer style={{ backgroundColor: '#ffffff', justifyContent: "space-around" }}>
-                    <TouchableOpacity
-                        style={{ justifyContent: 'center' }}
-                        onPress={() =>
-                            this.setState({ step: 'map' })
-                        }>
-                        <Image
-                            source={require('../../assets/maps.png')}
-                            style={{ width: 50, height: 50 }}></Image>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ justifyContent: 'center' }}
-                        onPress={() =>
-                            this.setState({ step: 'table' })
-                        }>
-                        <Image
-                            source={require('../../assets/table.png')}
-                            style={{ width: 60, height: 60 }}></Image>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() =>
-                            this.setState({ step: 'add' })
-                        }>
-                        <Image
-                            source={require('../../assets/add.png')}
-                            style={{ width: 50, height: 50 }}></Image>
-                    </TouchableOpacity>
-                </Footer>
+
+                            </View>
+                        </Item>
+                        <Item fixedLabel >
+                            <Label>อายุ</Label>
+                            <Input value={Age_disease} keyboardType='numeric'
+                                onChangeText={str => this.setState({ Age_disease: str })} placeholder="อายุ" />
+                        </Item>
+                        <Item fixedLabel >
+                            <Label>การดื่มสุรา</Label>
+                            <Picker
+                                mode="dropdown"
+                                placeholder="ความถี่การดื่ม"
+                                iosIcon={<Icon name="down" type="AntDesign"></Icon>}
+                                selectedValue={Frequency_of_alcohol_disease}
+                                onValueChange={str => this.setState({ Frequency_of_alcohol_disease: str })}
+                            >
+                                <Picker.Item key="0" label="ความถี่การดื่ม" value="" />
+                                <Picker.Item key="1" label="ทุกวัน" value="ทุกวัน" />
+                                <Picker.Item key="2" label="5-6วัน/สัปดาห์" value="5-6วัน/สัปดาห์" />
+                                <Picker.Item key="3" label="3-4วัน/สัปดาห์" value="3-4วัน/สัปดาห์" />
+                                <Picker.Item key="4" label="1-2วัน/สัปดาห์" value="1-2วัน/สัปดาห์" />
+                                <Picker.Item key="5" label="นานๆครั้ง" value="นานๆครั้ง" />
+                            </Picker>
+                        </Item>
+                        <Item fixedLabel >
+                            <Label>ปริมาณการดื่ม</Label>
+                            <Picker
+                                mode="dropdown"
+                                placeholder="ปริมาณการดื่มต่อครั้ง"
+                                iosIcon={<Icon name="down" type="AntDesign"></Icon>}
+                                selectedValue={Alcohol_consumption_disease}
+                                onValueChange={str => this.setState({ Alcohol_consumption_disease: str })}
+                            >
+                                <Picker.Item key="0" label="ปริมาณการดื่มต่อครั้ง" value="" />
+                                <Picker.Item key="1" label="ดื่มมาก" value="ดื่มมาก" />
+                                <Picker.Item key="2" label="ดื่มปานกลาง" value="ดื่มปานกลาง" />
+                                <Picker.Item key="3" label="ดื่มน้อย" value="ดื่มน้อย" />
+                            </Picker>
+                        </Item>
+                        <Item fixedLabel >
+                            <Label>การสูบบุหรี่</Label>
+                            <Input value={Smoking_disease}
+                                keyboardType='numeric'
+                                onChangeText={str => this.setState({ Smoking_disease: str })} placeholder="กี่มวนต่อวัน" />
+                        </Item>
+                        <Item fixedLabel >
+                            <Label>ประเภทของบุหรี่</Label>
+                            <Picker
+                                mode="dropdown"
+                                placeholder="ประเภท"
+                                iosIcon={<Icon name="down" type="AntDesign"></Icon>}
+                                selectedValue={Smoking_type_disease}
+                                onValueChange={str => this.setState({ Smoking_type_disease: str })}
+                            >
+                                <Picker.Item key="0" label="ประเภท" value="" />
+                                <Picker.Item key="1" label="บุหรี่ยาเส้นหรือมวนเอง" value="บุหรี่ยาเส้นหรือมวนเอง" />
+                                <Picker.Item key="2" label="บุหรี่ก้นกรอง" value="บุหรี่ก้นกรอง" />
+                                <Picker.Item key="3" label="บุหรี่ไฟฟ้า" value="บุหรี่ไฟฟ้า" />
+                            </Picker>
+                        </Item>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 1 }}>
+                            <Button success style={{ margin: 10 }} onPress={this.onSubmitDisease.bind(this)}>
+                                <Icon name='save' type="AntDesign" />
+                                <Text>บันทึก</Text></Button>
+                            <Button danger style={{ margin: 10 }} onPress={this.onCancelDisease.bind(this)}>
+                                <Icon name='left' type="AntDesign" />
+                                <Text>กลับ</Text></Button>
+                        </View>
+                    </Content>}
+                {step !== 'addDisease' &&
+                    <>
+                        <Footer style={{ backgroundColor: '#ffffff' }}>
+                            <TouchableOpacity
+                                style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
+                                onPress={this.findCoordinates}>
+                                <Icon name="enviroment" type="AntDesign"></Icon>
+                                <Text>
+                                    เลือกพิกัดที่อยู่ตอนนี้
+                                </Text>
+
+                            </TouchableOpacity>
+                        </Footer>
+                        <Footer style={{ backgroundColor: '#ffffff', justifyContent: "space-around" }}>
+                            <TouchableOpacity
+                                style={{ justifyContent: 'center' }}
+                                onPress={() =>
+                                    this.setState({ step: 'map' })
+                                }>
+                                <Image
+                                    source={require('../../assets/maps.png')}
+                                    style={{ width: 50, height: 50 }}></Image>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ justifyContent: 'center' }}
+                                onPress={() =>
+                                    this.setState({ step: 'table' })
+                                }>
+                                <Image
+                                    source={require('../../assets/table.png')}
+                                    style={{ width: 60, height: 60 }}></Image>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    this.setState({ step: 'add' })
+                                }>
+                                <Image
+                                    source={require('../../assets/add.png')}
+                                    style={{ width: 50, height: 50 }}></Image>
+                            </TouchableOpacity>
+                        </Footer>
+                    </>}
             </Container>
         )
     }
