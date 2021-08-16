@@ -82,5 +82,20 @@ export default StyleSheet.create({
     map_image: {
         width: 100,
         height: 100,
+    },
+    cardBox: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 10,
+        margin: 5
     }
 })

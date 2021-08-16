@@ -306,6 +306,7 @@ export class LocalCalendarScreen extends Component {
                                 <Label>เดือนที่เริ่ม</Label>
                                 <Picker
                                     selectedValue={Month1}
+                                    style={{ height: 40 }}
                                     onValueChange={str => this.genrateMonth(str, 1)}>
                                     <Picker.Item key="0" label="เลือกเดือนที่เริ่ม" value="" />
                                     {this.state.showMouth1}
@@ -316,6 +317,7 @@ export class LocalCalendarScreen extends Component {
                                 <Label>เดือนที่สิ้นสุด</Label>
                                 <Picker
                                     selectedValue={Month2}
+                                    style={{ height: 40 }}
                                     onValueChange={str => this.genrateMonth(str, 2)}>
                                     <Picker.Item key="0" label="เลือกเดือนที่สิ้นสุด" value="" />
                                     {this.state.showMouth2}

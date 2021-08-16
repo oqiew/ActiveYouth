@@ -1089,6 +1089,7 @@ export class AYScreen extends Component {
                                 iosIcon={<Icon name="down" type="AntDesign"></Icon>}
                                 selectedValue={Frequency_of_alcohol_disease}
                                 onValueChange={str => this.setState({ Frequency_of_alcohol_disease: str })}
+                                style={{ height: 40 }}
                             >
                                 <Picker.Item key="0" label="ความถี่การดื่ม" value="" />
                                 <Picker.Item key="1" label="ทุกวัน" value="ทุกวัน" />
@@ -1106,6 +1107,7 @@ export class AYScreen extends Component {
                                 iosIcon={<Icon name="down" type="AntDesign"></Icon>}
                                 selectedValue={Alcohol_consumption_disease}
                                 onValueChange={str => this.setState({ Alcohol_consumption_disease: str })}
+                                style={{ height: 40 }}
                             >
                                 <Picker.Item key="0" label="ปริมาณการดื่มต่อครั้ง" value="" />
                                 <Picker.Item key="1" label="ดื่มมาก" value="ดื่มมาก" />
@@ -1127,6 +1129,7 @@ export class AYScreen extends Component {
                                 iosIcon={<Icon name="down" type="AntDesign"></Icon>}
                                 selectedValue={Smoking_type_disease}
                                 onValueChange={str => this.setState({ Smoking_type_disease: str })}
+                                style={{ height: 40 }}
                             >
                                 <Picker.Item key="0" label="ประเภท" value="" />
                                 <Picker.Item key="1" label="บุหรี่ยาเส้นหรือมวนเอง" value="บุหรี่ยาเส้นหรือมวนเอง" />

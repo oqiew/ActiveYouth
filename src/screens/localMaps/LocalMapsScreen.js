@@ -541,7 +541,9 @@ export class LocalMapsScreen extends Component {
                                     iosIcon={<Icon name="down" type="AntDesign"></Icon>}
                                     selectedValue={Lm_type}
                                     onValueChange={str => this.setState({ Lm_type: str })}
+                                    style={{ height: 40 }}
                                 >
+                                    <Picker.Item key="0" label="เลือกประเภทพื้นที่" value="" />
                                     <Picker.Item key="1" label="ทรัพยากรน้ำ" value="ทรัพยากรน้ำ" />
                                     <Picker.Item key="2" label="ทรัพยากรป่าไม้" value="ทรัพยากรป่าไม้" />
                                     <Picker.Item key="3" label="สถานที่สำคัญ" value="สถานที่สำคัญ" />
@@ -653,7 +655,7 @@ export class LocalMapsScreen extends Component {
                         <Icon name="enviroment" type="AntDesign"></Icon>
                         <Text>
                             เลือกพิกัดที่อยู่ตอนนี้
-                          </Text>
+                        </Text>
 
                     </TouchableOpacity>
                 </Footer>

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { addProfile } from '../../redux/Reducer';
 import HeaderAy from '../../components/header/HeaderAy';
 import firestore from '@react-native-firebase/firestore';
-import ImagePicker from 'react-native-image-picker'
+import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer'
 import DatePicker from 'react-native-datepicker'
 import { isEmptyValues } from '../../components/Method';
@@ -237,12 +237,12 @@ export class ProfileEditScreen extends Component {
                                 mode="dropdown"
                                 placeholder="เลือกเพศ"
                                 iosIcon={<Icon name="down" type="AntDesign"></Icon>}
-                                style={{ left: -56 }}
+                                style={{ left: -56, height: 40 }}
                                 selectedValue={Sex}
                                 onValueChange={str => this.setState({ Sex: str })}>
-                                 <Picker.Item key="0" label="เลือก" value="" />
+                                <Picker.Item key="0" label="เลือก" value="" />
                                 <Picker.Item key="1" label="ชาย" value="ชาย" />
-                                <Picker.Item key="2"  label="หญิง" value="หญิง" />
+                                <Picker.Item key="2" label="หญิง" value="หญิง" />
                                 <Picker.Item key="3" label="อื่นๆ" value="อื่นๆ" />
                             </Picker>
                         </Item>

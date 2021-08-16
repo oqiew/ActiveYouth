@@ -30,6 +30,7 @@ import temple from '../../assets/map/temple.png'
 import school from '../../assets/map/school.png'
 import Geolocation from '@react-native-community/geolocation';
 import ViewData from './ViewData';
+import Pie from 'react-native-pie'
 export class DashboardScreen extends Component {
     constructor(props) {
         super(props)
@@ -58,6 +59,12 @@ export class DashboardScreen extends Component {
             query_yns: [],
             query_ays: [],
             query_local_map: [],
+            query_local_map1: [],
+            query_local_map2: [],
+            query_local_map3: [],
+            query_local_map4: [],
+            query_local_map5: [],
+            query_local_map6: [],
 
             action: 'map',
             select_area: '',
@@ -127,6 +134,13 @@ export class DashboardScreen extends Component {
             loading: true,
         });
         const query_local_map = [];
+        const query_local_map1 = [];
+        const query_local_map2 = [];
+        const query_local_map3 = [];
+        const query_local_map4 = [];
+        const query_local_map5 = [];
+        const query_local_map6 = [];
+
         let count = 0;
         // river,resource,user_star,government_star,flag_good,flag_danger
         var iconm = '';
@@ -144,16 +158,22 @@ export class DashboardScreen extends Component {
 
             if (Lm_type === 'ทรัพยากรน้ำ') {
                 iconm = river;
+                query_local_map1.push({ iconm })
             } else if (Lm_type === 'ทรัพยากรป่าไม้') {
                 iconm = resource;
+                query_local_map2.push({ iconm })
             } else if (Lm_type === 'สถานที่สำคัญ') {
                 iconm = government_star;
+                query_local_map3.push({ iconm })
             } else if (Lm_type === 'บุคคลสำคัญ') {
                 iconm = user_star;
+                query_local_map4.push({ iconm })
             } else if (Lm_type === 'พื้นที่ดี') {
                 iconm = flag_good;
+                query_local_map5.push({ iconm })
             } else if (Lm_type === 'พื้นที่เสี่ยง') {
                 iconm = flag_danger;
+                query_local_map6.push({ iconm })
             }
             if (!isEmptyValue(Position)) {
                 query_local_map.push(
@@ -191,6 +211,12 @@ export class DashboardScreen extends Component {
         });
         this.setState({
             query_local_map,
+            query_local_map1,
+            query_local_map2,
+            query_local_map3,
+            query_local_map4,
+            query_local_map5,
+            query_local_map6,
             loading: false,
         });
     };
@@ -419,6 +445,8 @@ export class DashboardScreen extends Component {
         });
 
         this.setState({
+            // select_area: query_areas[8],
+            // action: "view",
             query_areas
         })
     }
@@ -456,8 +484,7 @@ export class DashboardScreen extends Component {
         this.setState({ loading: true })
         Geolocation.getCurrentPosition(
             position => {
-                console.log(position.coords.latitude
-                    , ",", position.coords.longitude);
+
                 this.setState({
                     position: {
                         lat: position.coords.latitude,
@@ -468,7 +495,6 @@ export class DashboardScreen extends Component {
             },
             error => {
                 this.setState({ loading: false })
-                console.log(error);
             },
             {
                 enableHighAccuracy: true,
@@ -481,7 +507,6 @@ export class DashboardScreen extends Component {
 
     };
     onSelectedArea(Area) {
-        console.log(Area)
         this.setState({
             Area,
             select_area: Area
@@ -506,6 +531,8 @@ export class DashboardScreen extends Component {
             Relegion_covid19, Relegion_belief, LM_type, subdistricts, subdistrict } = this.state;
         const { query_religions, query_schools, query_local_organizations, query_yns,
             query_ays, query_local_map, } = this.state;
+        const { query_local_map1, query_local_map2, query_local_map3, query_local_map4
+            , query_local_map5, query_local_map6 } = this.state;
         const _mstyle = StyleSheet.create({
             sub_text_row: {
                 backgroundColor: '#ffffff', borderRadius: 5, width: '63%',
@@ -516,6 +543,11 @@ export class DashboardScreen extends Component {
                 padding: 3
             },
         });
+        let numberMap = parseInt(query_religions.length, 10) + parseInt(query_schools.length, 10) + parseInt(query_local_organizations.length, 10) +
+            parseInt(query_yns.length, 10) + parseInt(query_local_map.length, 10) + parseInt(query_ays.length, 10);
+        if (numberMap === 0) {
+            numberMap = 1;
+        }
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -572,7 +604,7 @@ export class DashboardScreen extends Component {
                         }
                         {action === 'view' &&
                             <Content contentContainerStyle={{ padding: 15, backgroundColor: '#f0f2f5' }}>
-                                <View style={{ flexDirection: "row", justifyContent: 'flex-end' }}>
+                                <View style={{ flexDirection: "row", justifyContent: 'flex-end', margin: 5 }}>
                                     <TouchableOpacity
                                         onPress={() => this.setState({ action: 'map' })}
                                         style={{
@@ -583,22 +615,146 @@ export class DashboardScreen extends Component {
                                     </TouchableOpacity>
                                 </View>
 
-                                <View style={{ flexDirection: 'row', padding: 3 }}>
-                                    <Text style={{ textAlign: "left", width: 120 }}>
-                                        ประชากรชาย
-                                    </Text>
-                                    <Text style={_mstyle.sub_text_row}>
-                                        {select_area.sumM}
-                                    </Text>
+                                <View
+                                    style={[{
+                                        paddingVertical: 5,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                    }, mainStyle.cardBox]}
+                                >
+                                    <View style={{ width: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text>
+                                            ชาย{"\n"}{select_area.sumM}
+                                        </Text>
+                                    </View>
+                                    <Pie
+                                        radius={80}
+                                        sections={[
+                                            {
+                                                percentage: (select_area.sumM * 100) / (select_area.sumM + select_area.sumF === 0 ? 1 : select_area.sumM + select_area.sumF),
+                                                color: '#C70039',
+                                            },
+                                            {
+                                                percentage: (select_area.sumF * 100) / (select_area.sumM + select_area.sumF === 0 ? 1 : select_area.sumM + select_area.sumF),
+                                                color: '#404FCD',
+                                            },
+                                        ]}
+                                        strokeCap={'butt'}
+                                    />
+                                    <View style={{ width: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text>
+                                            หญิง{"\n"}{select_area.sumF}
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View style={{ flexDirection: 'row', padding: 3 }}>
-                                    <Text style={{ textAlign: "left", width: 120 }}>
-                                        ประชากรหญิง
-                                    </Text>
-                                    <Text style={_mstyle.sub_text_row}>
-                                        {select_area.sumF}
-                                    </Text>
+                                <View
+                                    style={[{
+                                        paddingVertical: 5,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }, mainStyle.cardBox]}
+                                >
+                                    <Pie
+                                        radius={80}
+                                        sections={[
+                                            {
+                                                percentage: (query_religions.length * 100) / numberMap,
+                                                color: '#165ff3',
+                                            },
+                                            {
+                                                percentage: (query_schools.length * 100) / numberMap,
+                                                color: '#11ace8',
+                                            },
+                                            {
+                                                percentage: (query_local_organizations.length * 100) / numberMap,
+                                                color: '#f94906',
+                                            },
+                                            {
+                                                percentage: (query_yns.length * 100) / numberMap,
+                                                color: '#07f8b6',
+                                            },
+                                            {
+                                                percentage: (query_local_map1.length * 100) / numberMap,
+                                                color: '#f3a80c',
+                                            },
+                                            {
+                                                percentage: (query_local_map2.length * 100) / numberMap,
+                                                color: '#f5cf5c',
+                                            },
+                                            {
+                                                percentage: (query_local_map3.length * 100) / numberMap,
+                                                color: '#8080ff',
+                                            },
+                                            {
+                                                percentage: (query_local_map4.length * 100) / numberMap,
+                                                color: '#00bfbf',
+                                            },
+                                            {
+                                                percentage: (query_local_map5.length * 100) / numberMap,
+                                                color: '#ffff80',
+                                            },
+                                            {
+                                                percentage: (query_local_map6.length * 100) / numberMap,
+                                                color: '#28bb6f',
+                                            },
+                                            {
+                                                percentage: (query_ays.length * 100) / numberMap,
+                                                color: '#ce71ad',
+                                            },
+                                        ]}
+                                        strokeCap={'butt'}
+                                    />
+                                    <View style={{ flexDirection: "column", justifyContent: "center" }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#165ff3", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>ศาสนา</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#11ace8", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>สถานศึกษา</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#f94906", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>อปท</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#07f8b6", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>เครือข่าย</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#f3a80c", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>ทรัพยากรน้ำ</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#f5cf5c", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>ทรัพยากรป่าไม้</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#8080ff", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>สถานที่สำคัญ</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#00bfbf", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>บุคคลสำคัญ</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#ffff80", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>จุดดี</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#28bb6f", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>จุดเสี่ยง</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#ce71ad", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>ay</Text>
+                                        </View>
+                                    </View>
                                 </View>
+
+
+
                                 <View style={{ flexDirection: 'row', padding: 3 }}>
                                     <Text style={{ textAlign: "left", width: 120 }}>
                                         จำนวนครัวเรือน
@@ -699,7 +855,7 @@ export class DashboardScreen extends Component {
                             <Icon name="enviroment" type="AntDesign"></Icon>
                             <Text>
                                 เลือกพิกัดที่อยู่ตอนนี้
-                                      </Text>
+                            </Text>
 
                         </TouchableOpacity>
                     </Footer>
