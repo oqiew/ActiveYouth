@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import { View, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Image, Alert, Platform } from 'react-native'
 import { Icon, Input, Label, Item, Picker, Text, Button, Container, Content, } from 'native-base';
 import Storage from '@react-native-firebase/storage'
 import { connect } from 'react-redux';
@@ -17,7 +17,7 @@ import { TableName } from '../../database/TableName';
 import { routeName } from '../../route/routeName';
 import mainStyle from '../../styles/main.style';
 import Auth from '@react-native-firebase/auth';
-
+import DatePickerIOS from 'react-native-date-picker'
 const style_private = StyleSheet.create({
     image: {
         borderRadius: 10, width: 200, height: 200, marginHorizontal: 5, marginVertical: 5,
@@ -185,7 +185,7 @@ export class ProfileEditScreen extends Component {
         const { Name, Lastname, Nickname, Sex, Phone_number,
             Line_ID, Facebook, Birthday_format,
         } = this.state;
-
+        const platform = Platform.OS;
         return (
             <Container style={{ backgroundColor: themeStyle.background }}>
                 <HeaderAy name="โปรไฟล์" backHandler={this.onBack}></HeaderAy>
@@ -248,6 +248,11 @@ export class ProfileEditScreen extends Component {
                         </Item>
                         <Item fixedLabel style={{ marginTop: 5 }}>
                             <Label>วันเกิด<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>
+                            {/* {Platform.OS === 'ios' ?
+                                <DatePickerIOS
+                                    mode="date"
+
+                                ></DatePickerIOS> : */}
                             <DatePicker
                                 style={{ width: 200 }}
                                 date={Birthday_format}
@@ -275,6 +280,8 @@ export class ProfileEditScreen extends Component {
                                 }}
                                 onDateChange={(date) => { this.setState({ Birthday_format: date }) }}
                             />
+                            {/* } */}
+
 
                         </Item>
                         <Item fixedLabel style={{ marginTop: 5 }}>

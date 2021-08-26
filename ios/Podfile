@@ -14,12 +14,9 @@ target 'ActiveYouth' do
   pod 'Google-Maps-iOS-Utils'
   pod 'Firebase/Analytics'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  use_react_native!(:path => config["reactNativePath"])
+  use_react_native!(:path => config["reactNastivePath"])
+   
 
-
-
-
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'ActiveYouthTests' do
     inherit! :complete

@@ -765,10 +765,22 @@ export class AYScreen extends Component {
                             </Item>
                             <Item fixedLabel>
                                 <Label>ประเภทบุคคล :</Label>
-                                <Radio selected={Y_type === 'normal'} onPress={() => this.setState({ Y_type: 'normal' })}></Radio>
-                                <Text>normal</Text>
-                                <Radio selected={Y_type === 'ay'} onPress={() => this.setState({ Y_type: 'ay' })}></Radio>
-                                <Text>AY</Text>
+                                <View style={{ flexDirection: 'row', width: '50%' }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.setState({ Y_type: 'normal' })}
+                                        style={{ margin: 3, flexDirection: 'row', borderWidth: 1, borderRadius: 5 }}>
+                                        <Text>normal</Text>
+                                        <Radio selected={Y_type === 'normal'} ></Radio>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => this.setState({ Y_type: 'ay' })}
+                                        style={{ margin: 3, flexDirection: 'row', borderWidth: 1, borderRadius: 5 }}>
+                                        <Text>AY</Text>
+                                        <Radio selected={Y_type === 'ay'}></Radio>
+                                    </TouchableOpacity>
+
+                                </View>
+
                             </Item>
                             <Item fixedLabel>
                                 <Label>สมาชิกครอบครัว<Text style={{ color: themeStyle.Color_red }}>*</Text> :</Label>

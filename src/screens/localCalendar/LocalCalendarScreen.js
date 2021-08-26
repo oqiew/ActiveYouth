@@ -275,11 +275,13 @@ export class LocalCalendarScreen extends Component {
                             <Item fixedLabel >
                                 <Label>ประเภท</Label>
                                 <View style={{ flexDirection: "row" }}>
-                                    <TouchableOpacity onPress={() => this.setState({ Type_activity: 'วัฒนธรรมประเพณี' })} style={{ flexDirection: "row" }}>
+                                    <TouchableOpacity onPress={() => this.setState({ Type_activity: 'วัฒนธรรมประเพณี' })}
+                                        style={{ margin: 3, flexDirection: 'row', borderWidth: 1, borderRadius: 5 }}>
                                         <Text>วัฒนธรรมประเพณี</Text>
                                         <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Type_activity === "วัฒนธรรมประเพณี" ? true : false}> </Radio>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => this.setState({ Type_activity: 'เศรษฐกิจ' })} style={{ flexDirection: "row" }}>
+                                    <TouchableOpacity onPress={() => this.setState({ Type_activity: 'เศรษฐกิจ' })}
+                                        style={{ margin: 3, flexDirection: 'row', borderWidth: 1, borderRadius: 5 }}>
                                         <Text>เศรษฐกิจ</Text>
                                         <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Type_activity === "เศรษฐกิจ" ? true : false} ></Radio>
                                     </TouchableOpacity>
@@ -290,13 +292,17 @@ export class LocalCalendarScreen extends Component {
                             <Item fixedLabel style={{ marginTop: 5 }}>
                                 <Label>เลือกลักษณะ</Label>
                                 <View style={{ flexDirection: "row" }}>
-                                    <TouchableOpacity onPress={() => this.setState({ Attribute: 'ทั่วไป' })} style={{ flexDirection: "row" }}>
+                                    <TouchableOpacity onPress={() => this.setState({ Attribute: 'ทั่วไป' })}
+                                        style={{ margin: 3, flexDirection: 'row', borderWidth: 1, borderRadius: 5 }}>
                                         <Text>ทั่วไป</Text>
-                                        <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Attribute === "ทั่วไป" ? true : false}> </Radio>
+                                        <Radio style={{ marginLeft: 3, marginRight: 3 }}
+                                            selected={Attribute === "ทั่วไป" ? true : false}> </Radio>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => this.setState({ Attribute: 'เฉพาะถิ่น' })} style={{ flexDirection: "row" }}>
+                                    <TouchableOpacity onPress={() => this.setState({ Attribute: 'เฉพาะถิ่น' })}
+                                        style={{ margin: 3, flexDirection: 'row', borderWidth: 1, borderRadius: 5 }}>
                                         <Text>เฉพาะถิ่น</Text>
-                                        <Radio style={{ marginLeft: 3, marginRight: 3 }} selected={Attribute === "เฉพาะถิ่น" ? true : false} ></Radio>
+                                        <Radio style={{ marginLeft: 3, marginRight: 3 }}
+                                            selected={Attribute === "เฉพาะถิ่น" ? true : false} ></Radio>
                                     </TouchableOpacity>
 
 
