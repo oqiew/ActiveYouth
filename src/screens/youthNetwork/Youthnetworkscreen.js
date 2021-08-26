@@ -197,7 +197,6 @@ export class Youthnetworkscreen extends Component {
 
     };
     onSubmit = async () => {
-        console.log('call')
         this.setState({
             loading: true
         })
@@ -217,7 +216,7 @@ export class Youthnetworkscreen extends Component {
                 temp_image_URL = await uploadImage(tbname, new_id, map_image_uri);
             } else {
                 temp_image_URL = Map_image_URL
-            } s
+            }
             if (!isEmptyValue(temp_image_URL)) {
                 if (
                     !isEmptyValue(Yn_name) &&
@@ -227,8 +226,6 @@ export class Youthnetworkscreen extends Component {
                 ) {
                     if (isEmptyValue(this.state.edit_ID)) {
                         // add
-                        console.log('add religion')
-
                         tbMain
                             .doc(new_id)
                             .set({
@@ -462,7 +459,7 @@ export class Youthnetworkscreen extends Component {
                     </Content>
                 }
                 {step === 'add' &&
-                    <Content contentContainerStyle={[mainStyle.background, { height: '100%' }]}>
+                    <Content contentContainerStyle={[mainStyle.background]}>
                         <View style={{ alignItems: 'center', marginBottom: 10, }}>
                             <Text style={mainStyle.title}>เพิ่มข้อมูล</Text>
                             <View style={{ flexDirection: 'row' }}>
