@@ -543,8 +543,12 @@ export class DashboardScreen extends Component {
                 padding: 3
             },
         });
+        let numbermapLocal = parseInt(query_local_map.length, 10);
+        if (numbermapLocal === 0) {
+            numbermapLocal = 1;
+        }
         let numberMap = parseInt(query_religions.length, 10) + parseInt(query_schools.length, 10) + parseInt(query_local_organizations.length, 10) +
-            parseInt(query_yns.length, 10) + parseInt(query_local_map.length, 10) + parseInt(query_ays.length, 10);
+            parseInt(query_yns.length, 10) + parseInt(query_ays.length, 10);
         if (numberMap === 0) {
             numberMap = 1;
         }
@@ -589,8 +593,6 @@ export class DashboardScreen extends Component {
                                         latitude: this.state.position.lat,
                                         longitude: this.state.position.lng,
                                     }}>
-
-
                                 </Marker>
                                 {query_religions}
                                 {query_schools}
@@ -647,6 +649,7 @@ export class DashboardScreen extends Component {
                                         </Text>
                                     </View>
                                 </View>
+
                                 <View
                                     style={[{
                                         paddingVertical: 5,
@@ -675,36 +678,13 @@ export class DashboardScreen extends Component {
                                                 color: '#07f8b6',
                                             },
                                             {
-                                                percentage: (query_local_map1.length * 100) / numberMap,
-                                                color: '#f3a80c',
-                                            },
-                                            {
-                                                percentage: (query_local_map2.length * 100) / numberMap,
-                                                color: '#f5cf5c',
-                                            },
-                                            {
-                                                percentage: (query_local_map3.length * 100) / numberMap,
-                                                color: '#8080ff',
-                                            },
-                                            {
-                                                percentage: (query_local_map4.length * 100) / numberMap,
-                                                color: '#00bfbf',
-                                            },
-                                            {
-                                                percentage: (query_local_map5.length * 100) / numberMap,
-                                                color: '#ffff80',
-                                            },
-                                            {
-                                                percentage: (query_local_map6.length * 100) / numberMap,
-                                                color: '#28bb6f',
-                                            },
-                                            {
                                                 percentage: (query_ays.length * 100) / numberMap,
                                                 color: '#ce71ad',
                                             },
                                         ]}
                                         strokeCap={'butt'}
                                     />
+
                                     <View style={{ flexDirection: "column", justifyContent: "center" }}>
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <View style={{ backgroundColor: "#165ff3", width: 10, height: 10, borderRadius: 10 }}></View>
@@ -722,6 +702,55 @@ export class DashboardScreen extends Component {
                                             <View style={{ backgroundColor: "#07f8b6", width: 10, height: 10, borderRadius: 10 }}></View>
                                             <Text>เครือข่าย</Text>
                                         </View>
+
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={{ backgroundColor: "#ce71ad", width: 10, height: 10, borderRadius: 10 }}></View>
+                                            <Text>ay</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View
+                                    style={[{
+                                        paddingVertical: 5,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }, mainStyle.cardBox]}
+                                >
+                                    <Pie
+                                        radius={80}
+                                        sections={[
+                                            {
+                                                percentage: (query_local_map1.length * 100) / numbermapLocal,
+                                                color: '#f3a80c',
+                                            },
+                                            {
+                                                percentage: (query_local_map2.length * 100) / numbermapLocal,
+                                                color: '#f5cf5c',
+                                            },
+                                            {
+                                                percentage: (query_local_map3.length * 100) / numbermapLocal,
+                                                color: '#8080ff',
+                                            },
+                                            {
+                                                percentage: (query_local_map4.length * 100) / numbermapLocal,
+                                                color: '#00bfbf',
+                                            },
+                                            {
+                                                percentage: (query_local_map5.length * 100) / numbermapLocal,
+                                                color: '#ffff80',
+                                            },
+                                            {
+                                                percentage: (query_local_map6.length * 100) / numbermapLocal,
+                                                color: '#28bb6f',
+                                            },
+
+                                        ]}
+                                        strokeCap={'butt'}
+                                    />
+
+                                    <View style={{ flexDirection: "column", justifyContent: "center" }}>
+
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <View style={{ backgroundColor: "#f3a80c", width: 10, height: 10, borderRadius: 10 }}></View>
                                             <Text>ทรัพยากรน้ำ</Text>
@@ -746,15 +775,8 @@ export class DashboardScreen extends Component {
                                             <View style={{ backgroundColor: "#28bb6f", width: 10, height: 10, borderRadius: 10 }}></View>
                                             <Text>จุดเสี่ยง</Text>
                                         </View>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                            <View style={{ backgroundColor: "#ce71ad", width: 10, height: 10, borderRadius: 10 }}></View>
-                                            <Text>ay</Text>
-                                        </View>
                                     </View>
                                 </View>
-
-
-
                                 <View style={{ flexDirection: 'row', padding: 3 }}>
                                     <Text style={{ textAlign: "left", width: 120 }}>
                                         จำนวนครัวเรือน
@@ -885,12 +907,9 @@ export class DashboardScreen extends Component {
         )
     }
 }
-
-
 const mapStateToProps = state => ({
     userReducer: state.userReducer,
 });
-
 //used to action (dispatch) in to props
 const mapDispatchToProps = {
     addProfile,

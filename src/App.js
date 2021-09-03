@@ -34,13 +34,38 @@ import DashboardGuestScreen from './screens/guest/DashboardScreen';
 import GuestHomeScreen from './screens/GuestHomeScreen';
 import ProfileEditScreen from './screens/profile/ProfileEditScreen';
 import LocalDisease from './screens/localDisease/LocalDisease';
-
-
+import VersionCheck from 'react-native-version-check';
+import { Alert, BackHandler, Linking, } from 'react-native';
+import { useEffect } from 'react';
 
 const Stack = createStackNavigator();
 
-function App() {
+const App = () => {
+    useEffect(() => {
+        checkVersion();
+    }, [])
+    const checkVersion = async () => {
+        try {
+            let updateNeeded = await VersionCheck.needUpdate();
+            if (updateNeeded && updateNeeded.isNeeded) {
+                Alert.alert(
+                    'Please Update',
+                    'You will have to update your app to the lastest version to continue using',
+                    [{
+                        text: 'Update',
+                        onPress: () => {
+                            BackHandler.exitApp();
+                            Linking.openURL(updateNeeded.storeUrl)
+                        },
+                    },
+                    ],
+                    { cancelable: false }
+                )
+            }
+        } catch (error) {
 
+        }
+    }
     return (
         <NavigationContainer>
             <Stack.Navigator

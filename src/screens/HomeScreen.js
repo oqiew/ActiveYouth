@@ -3,7 +3,7 @@ import HeaderAy from '../components/header/HeaderAy'
 import Loading from '../components/Loading'
 import mainStyle from '../styles/main.style'
 import themeStyle from '../styles/theme.style'
-import { View, Image, TouchableOpacity, Alert, Platform, BackHandler } from 'react-native';
+import { View, Image, TouchableOpacity, Alert, Platform, BackHandler, Linking } from 'react-native';
 import { Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Grid, Col, FooterTab, Picker } from 'native-base';
 import { connect } from 'react-redux'
 import { addProfile, setArea } from '../redux/Reducer'
@@ -11,7 +11,6 @@ import { isEmptyValues, isEmptyValue } from '../components/Method'
 import { routeName } from '../route/routeName'
 import Firestore from '@react-native-firebase/firestore'
 import { TableName } from '../database/TableName'
-
 export class HomeScreen extends Component {
     constructor(props) {
         super(props);
@@ -29,8 +28,8 @@ export class HomeScreen extends Component {
     }
     componentDidMount() {
         this.tbAreas.onSnapshot(this.queryAreas);
-
     }
+
     queryAreas = (query) => {
         const query_areas = [];
         query.forEach(element => {
