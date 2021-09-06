@@ -31,6 +31,7 @@ import school from '../../assets/map/school.png'
 import Geolocation from '@react-native-community/geolocation';
 import ViewData from './ViewData';
 import Pie from 'react-native-pie'
+
 export class DashboardScreen extends Component {
     constructor(props) {
         super(props)
@@ -552,6 +553,33 @@ export class DashboardScreen extends Component {
         if (numberMap === 0) {
             numberMap = 1;
         }
+
+        const dataSet1 = [
+            {
+                name: "Johson",
+                amount: 30000,
+                sex: 'M',
+                is_married: true
+            },
+            {
+                name: "Monika",
+                amount: 355000,
+                sex: 'F',
+                is_married: false
+            },
+            {
+                name: "John",
+                amount: 250000,
+                sex: 'M',
+                is_married: false
+            },
+            {
+                name: "Josef",
+                amount: 450500,
+                sex: 'M',
+                is_married: true
+            }
+        ];
         return (
             <Container>
                 <Loading visible={loading}></Loading>
@@ -867,10 +895,15 @@ export class DashboardScreen extends Component {
                                 </View>
                             </Content>
                         }
+                        {action === 'load' &&
+                            <Content contentContainerStyle={{ padding: 15, backgroundColor: '#f0f2f5' }}>
+
+                            </Content>
+                        }
                     </>
                 }
                 {!isEmptyValue(select_area) && <>
-                    <Footer style={{ backgroundColor: '#ffffff' }}>
+                    {action === 'map' && <Footer style={{ backgroundColor: '#ffffff' }}>
                         <TouchableOpacity
                             style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
                             onPress={this.findCoordinates}>
@@ -880,7 +913,7 @@ export class DashboardScreen extends Component {
                             </Text>
 
                         </TouchableOpacity>
-                    </Footer>
+                    </Footer>}
                     <Footer style={{ backgroundColor: '#ffffff', justifyContent: "space-around" }}>
 
 
@@ -901,6 +934,15 @@ export class DashboardScreen extends Component {
                             <Image
                                 source={require('../../assets/table.png')}
                                 style={{ width: 60, height: 60 }}></Image>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ justifyContent: 'center' }}
+                            onPress={() =>
+                                this.setState({ action: 'load' })
+                            }>
+                            <Image
+                                source={require('../../assets/document.png')}
+                                style={{ width: 45, height: 45 }}></Image>
                         </TouchableOpacity>
                     </Footer></>}
             </Container>

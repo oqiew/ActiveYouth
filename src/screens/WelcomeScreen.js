@@ -13,6 +13,11 @@ import Auth from '@react-native-firebase/auth';
 import Firestore from '@react-native-firebase/firestore'
 import { isEmptyValue, isEmptyValues } from '../components/Method';
 import { TableName } from '../database/TableName';
+import VersionCheck from 'react-native-version-check';
+import { getAppstoreAppMetadata } from 'react-native-appstore-version-checker'
+const apple_store = "";
+const google_store = "";
+
 export class WelcomeScreen extends Component {
     constructor(props) {
         super(props)
@@ -46,6 +51,13 @@ export class WelcomeScreen extends Component {
         })
     }
     componentDidMount() {
+        getAppstoreAppMetadata(Platform.OS === 'ios' ? '1559240111' : 'com.activeyouth')
+        then(metadata => {
+            this.checkVersion(metadata)
+        })
+            .catch(err => {
+                console.log("error occurred", err);
+            });
         this.setState({
             loading: true
         })
@@ -121,6 +133,33 @@ export class WelcomeScreen extends Component {
     }
     goToForgotPassword() {
         this.props.navigation.navigate(routeName.ForgotPassword)
+    }
+    checkVersion = (lastVersion) => {
+        try {
+            VersionCheck.needUpdate({
+                currentVersion: VersionCheck.getCurrentVersion(),
+                lastestVersion: lastVersion
+            }).then(async res => {
+                if (res.isNeeded) {
+                    Alert.alert(
+                        'Please Update',
+                        'You will have to update your app to the lastest version to continue using',
+                        [{
+                            text: 'Update',
+                            onPress: async () => {
+                                BackHandler.exitApp();
+                                Linking.openURL(updateNeeded.storeUrl)
+                            },
+                        },
+                        ],
+                        { cancelable: false }
+                    )
+                }
+            })
+
+        } catch (error) {
+            console.log(Platform.OS, 'error check update', error)
+        }
     }
     render() {
         const { loading } = this.state;
