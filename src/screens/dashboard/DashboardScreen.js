@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { View, Image, TouchableOpacity, Alert, Platform, StyleSheet, ScrollView } from 'react-native';
+import { View, Image, TouchableOpacity, Alert, Platform, StyleSheet, ScrollView, PermissionsAndroid } from 'react-native';
 import {
     Container, Content, Footer, Text, Icon, Input, Label, Item, Button, Textarea, Picker, Body, Title, Header
+    , Grid, Col
 } from 'native-base';
 import { connect } from 'react-redux';
 import { addProfile } from '../../redux/Reducer';
@@ -31,7 +32,8 @@ import school from '../../assets/map/school.png'
 import Geolocation from '@react-native-community/geolocation';
 import ViewData from './ViewData';
 import Pie from 'react-native-pie'
-
+import { writeFile } from 'react-native-fs';
+import XLSX from 'xlsx';
 export class DashboardScreen extends Component {
     constructor(props) {
         super(props)
@@ -42,6 +44,8 @@ export class DashboardScreen extends Component {
         this.tbYouthNetworks = Firestore().collection(TableName.YouthNetworks);
         this.tbLocalMaps = Firestore().collection(TableName.LocalMaps);
         this.tbAYs = Firestore().collection(TableName.AYs);
+        this.tbCalendar = Firestore().collection(TableName.LocalCalendar);
+        this.tbLocalDisease = Firestore().collection(TableName.LocalDisease);
         this.state = {
             loading: false,
             Subdistrict: '',
@@ -67,6 +71,15 @@ export class DashboardScreen extends Component {
             query_local_map5: [],
             query_local_map6: [],
 
+            excel_areas: [],
+            excel_religions: [],
+            excel_schools: [],
+            excel_local_organizations: [],
+            excel_yns: [],
+            excel_ays: [],
+            excel_calendar: [],
+            excel_localDisease: [],
+            excel_local_map: [],
             action: 'map',
             select_area: '',
             view_data: '',
@@ -78,11 +91,50 @@ export class DashboardScreen extends Component {
 
 
     }
+    exportExcel = async (name, data) => {
+
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                {
+                    title: "การอนุญาตสิทธิ์การใช้งาน",
+                    message:
+                        "จำเป็นต้องขอสิทธิ์การใช้งานพื้นที่จัดเก็บข้อมูล",
+                    buttonNeutral: "ถามฉันทีหลัง",
+                    buttonNegative: "ยกเลิก",
+                    buttonPositive: "ตกลง"
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                // console.log(this.state.excel, this.state.excel.length())
+                var ws = XLSX.utils.json_to_sheet(data);
+                // console.log(ws)
+                var wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, name);
+
+                const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
+                var RNFS = require('react-native-fs');
+                var file = RNFS.DownloadDirectoryPath + name + '.xlsx';
+                writeFile(file, wbout, 'ascii').then((r) => {
+                    console.log('FILE WRITTEN!');
+                    Alert.alert("บันทึกไฟล์เสร็จสิ้น", 'ที่ Download/' + name + '.xlsx')
+                }).catch((e) => {
+                    console.log(e);
+                });
+            } else {
+                console.log("Camera permission denied");
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+
+    }
     listMarkLocalOrganization = querySnapshot => {
         this.setState({
             loading: true,
         });
         const query_local_organizations = [];
+        const excel_local_organizations = [];
         let count = 0;
         querySnapshot.forEach(doc => {
             // console.log(doc.data())
@@ -92,6 +144,15 @@ export class DashboardScreen extends Component {
                 Lgo_policy_youth, Lgo_activity_protect, Lgo_activity
             } = doc.data();
             if (!isEmptyValue(Position)) {
+                excel_local_organizations.push({
+                    "ชื่อองค์กร": Lgo_name,
+                    "ประเภทองค์กร": Lgo_type,
+                    "บุคลากร": Lgo_officer,
+                    "คนที่ทำงานด้านเด็ก": Lgo_position_youth,
+                    "นโยบาย": Lgo_policy_youth,
+                    "กิจกรรมด้านสุขภาพ": Lgo_activity_protect,
+                    "กิขกรรมเานเด็ก": Lgo_activity,
+                })
                 query_local_organizations.push(
                     <Marker
                         key={count}
@@ -127,6 +188,7 @@ export class DashboardScreen extends Component {
         });
         this.setState({
             query_local_organizations,
+            excel_local_organizations,
             loading: false,
         });
     };
@@ -135,6 +197,7 @@ export class DashboardScreen extends Component {
             loading: true,
         });
         const query_local_map = [];
+        const excel_local_map = [];
         const query_local_map1 = [];
         const query_local_map2 = [];
         const query_local_map3 = [];
@@ -177,6 +240,13 @@ export class DashboardScreen extends Component {
                 query_local_map6.push({ iconm })
             }
             if (!isEmptyValue(Position)) {
+                excel_local_map.push({
+                    "ชื่อพื้นที่": Lm_name,
+                    "ประเภทพื้นที่": Lm_type,
+                    "เวลาที่เกิดเหตุ": Lm_time,
+                    "ลักษณะ/รายละเอียด": Lm_description,
+                    "ผลที่เกิดขึ้น": Lm_action,
+                })
                 query_local_map.push(
                     <Marker
                         key={count}
@@ -218,6 +288,7 @@ export class DashboardScreen extends Component {
             query_local_map4,
             query_local_map5,
             query_local_map6,
+            excel_local_map,
             loading: false,
         });
     };
@@ -226,17 +297,40 @@ export class DashboardScreen extends Component {
             loading: true,
         });
         const query_ays = [];
+        const excel_ays = [];
         let count = 0;
         querySnapshot.forEach(doc => {
             // console.log(doc.data())
             const {
                 Map_image_URL, Position,
                 Y_name, Y_description, Y_type, Y_family, Y_family_stay,
-                Y_role, Y_concept, Y_family_career, Y_family_status,
+                Y_role, Y_concept, Y_family_career, Y_family_status, Y_family_sub_career,
                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
-                Y_attitude, Y_family_activity,
+                Y_attitude, Y_family_activity, Income1, Income2, Income3, Income4
             } = doc.data();
             if (!isEmptyValue(Position)) {
+                excel_ays.push({
+                    "ชื่อ-นามสกุล": Y_name,
+                    "เกี่ยวกับ": Y_description,
+                    "ประเภทของบุคคล": Y_type,
+                    "สมาชิกครอบครัว": Y_family,
+                    "อาศัยอยู่ด้วยกัน": Y_family_stay,
+                    "บทบาทของสมาชิก": Y_role,
+                    "แนวคิด": Y_concept,
+                    "รายได้2763": Income1,
+                    "รายได้5346": Income2,
+                    "รายได้6531": Income3,
+                    "รายได้มากกว่า6531บาท": Income4,
+                    "อาชีพหลักของครอบครัว": Y_family_career,
+                    "อาชีพรองของครอบครัว": Y_family_sub_career,
+                    "สถานะของครอบครัว": Y_family_status,
+                    "ผลกระทบจากcovid19": Y_covid19,
+                    "ดื่มสุรา": Y_alcohol,
+                    "สูบบุหรี่": Y_cigarette,
+                    "สูบบุหรี่และดื่มสุรา": Y_alcohol_cigarette,
+                    "ทัศนคติ": Y_attitude,
+                    "กิจกรรมภายในครอบครัว": Y_family_activity,
+                })
                 query_ays.push(
                     <Marker
                         key={count}
@@ -272,6 +366,7 @@ export class DashboardScreen extends Component {
         });
         this.setState({
             query_ays,
+            excel_ays,
             loading: false,
         });
     };
@@ -280,6 +375,7 @@ export class DashboardScreen extends Component {
             loading: true,
         });
         const query_religions = [];
+        const excel_religions = [];
         let count = 0;
         querySnapshot.forEach(doc => {
             // console.log(doc.data())
@@ -288,6 +384,14 @@ export class DashboardScreen extends Component {
                 Relegion_covid19, Relegion_belief, Position
             } = doc.data();
             if (!isEmptyValue(Position)) {
+                excel_religions.push({
+                    "ชื่อสถานที่": Religion_name,
+                    "บุคคลสำคัญที่เกี่ยวข้อง": Religion_user,
+                    "กิจกรรม": Religion_activity,
+                    "การจำหน่ายบุหรี่และเครื่องดื่มแอลกอฮอล์": Religion_alcohol,
+                    "ผลกระทบจากcovid19": Relegion_covid19,
+                    "ความเชื่อ": Relegion_belief,
+                })
                 query_religions.push(
                     <Marker
                         key={count}
@@ -326,6 +430,7 @@ export class DashboardScreen extends Component {
 
         this.setState({
             query_religions,
+            excel_religions,
             loading: false,
         });
     };
@@ -334,6 +439,7 @@ export class DashboardScreen extends Component {
             loading: true,
         });
         const query_yns = [];
+        const excel_yns = [];
         let count = 0;
         querySnapshot.forEach(doc => {
             // console.log(doc.data())
@@ -342,8 +448,15 @@ export class DashboardScreen extends Component {
                 Yn_name,
                 Yn_description,
                 Yn_phone_number,
+                Relevant
             } = doc.data();
             if (!isEmptyValue(Position)) {
+                excel_yns.push({
+                    "ชื่อเครือข่าย": Yn_name,
+                    "เบอร์ติดต่อ": Yn_phone_number,
+                    "เบอร์ติดต่อ": Yn_description,
+                    "บทบาทการทำงานร่วมกัน": Relevant,
+                })
                 query_yns.push(
                     <Marker
                         key={count}
@@ -378,7 +491,7 @@ export class DashboardScreen extends Component {
             count++;
         });
         this.setState({
-            query_yns,
+            query_yns, excel_yns,
             loading: false,
         });
     };
@@ -387,6 +500,7 @@ export class DashboardScreen extends Component {
             loading: true,
         });
         const query_schools = [];
+        const excel_schools = [];
         let count = 0;
         querySnapshot.forEach(doc => {
             // console.log(doc.data())
@@ -396,6 +510,14 @@ export class DashboardScreen extends Component {
                 School_cigarette, School_covid19,
             } = doc.data();
             if (!isEmptyValue(Position)) {
+                excel_schools.push({
+                    "ชื่อพื้นที่": School_name,
+                    "การเรียน": School_study,
+                    "กิจกรรม": School_activity,
+                    "การจำหน่ายบุหรี่และเครื่องดื่มแอลกอฮอล์": School_alcohol,
+                    "การสูบบุหรี่": School_cigarette,
+                    "ผลกระทบจากcovid19": School_covid19,
+                })
                 query_schools.push(
                     <Marker
                         key={count}
@@ -431,9 +553,47 @@ export class DashboardScreen extends Component {
         });
         this.setState({
             query_schools,
+            excel_schools,
             loading: false,
         });
     };
+    listLocalCalendar = querySnapshot => {
+        const excel_calendar = this.state;
+        querySnapshot.forEach(element => {
+            const { Name_activity, Type_activity, Attribute
+                , Month1, Month2, } = this.state;
+            excel_calendar.push({
+                "ชื่อกิจกรรม": Name_activity,
+                "ประเภท": Type_activity,
+                "ลักษณะ": Attribute,
+                "เดือนที่เริ่ม": Month1,
+                "เดือนที่สิ้นสุด": Month2,
+
+            })
+
+        })
+        this.setState({
+            excel_calendar
+        })
+    }
+    listLocalDisease = querySnapshot => {
+        const excel_localDisease = this.state;
+        querySnapshot.forEach(element => {
+            const { Name_disease, Male_number, Age_male_number, Female_number, Age_female_number, } = this.state;
+            excel_localDisease.push({
+                "ชื่อโรค": Name_disease,
+                "จำนวนเพศชาย": Male_number,
+                "ช่วงอายุเพศชาย": Age_male_number,
+                "จำนวนเพศหญิง": Female_number,
+                "ช่วงอายุเพศหญิง": Age_female_number,
+
+            })
+
+        })
+        this.setState({
+            excel_localDisease
+        })
+    }
     queryAreas = (query) => {
         const query_areas = [];
         query.forEach(element => {
@@ -507,6 +667,7 @@ export class DashboardScreen extends Component {
         );
 
     };
+    // เลือกพื้นที่และค้นหาข้อมูล
     onSelectedArea(Area) {
         this.setState({
             Area,
@@ -524,6 +685,10 @@ export class DashboardScreen extends Component {
                 .onSnapshot(this.listMarkLocalMap);
             this.tbAYs.where('Area_ID', '==', Area.ID)
                 .onSnapshot(this.listMarkAy);
+            this.tbCalendar.where('Area_ID', '==', Area.ID)
+                .onSnapshot(this.listLocalCalendar);
+            this.tbLocalDisease.where('Area_ID', '==', Area.ID)
+                .onSnapshot(this.listLocalDisease);
         })
     }
     render() {
@@ -896,8 +1061,99 @@ export class DashboardScreen extends Component {
                             </Content>
                         }
                         {action === 'load' &&
-                            <Content contentContainerStyle={{ padding: 15, backgroundColor: '#f0f2f5' }}>
+                            <Content contentContainerStyle={{ padding: 15, alignItems: 'center' }}>
+                                <Text>โหลดข้อมูล</Text>
+                                <Grid>
+                                    <Col style={{ height: '100%', padding: 5 }}>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "แผนที่ชุมชน", this.state.excel_local_map)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/maps.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                แผนที่ชุมชน</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "AY", this.state.excel_ays)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/user.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                AY</Text>
+                                        </TouchableOpacity>
+                                        < TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "ข้อมูลโรค", this.state.excel_localDisease)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/virus.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                ข้อมูลโรค</Text>
+                                        </TouchableOpacity>
+                                    </Col>
+                                    <Col style={{ height: '100%', padding: 5 }}>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "ศาสนา", this.state.excel_religions)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/temple.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                ศาสนา</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "อปท", this.state.excel_local_organizations)}
 
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/government.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                อปท</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "ปฏิทิน", this.state.excel_calendar)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/calendar.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                ปฏิทิน</Text>
+                                        </TouchableOpacity>
+                                    </Col>
+                                    <Col style={{ height: '100%', padding: 5 }}>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "สถานศึกษา", this.state.excel_schools)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/school.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                สถานศึกษา</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{ alignItems: 'center', padding: 2, height: 120 }}
+                                            onPress={this.exportExcel.bind(this, "เครือข่าย", this.state.excel_yns)}
+                                        >
+                                            <Image
+                                                source={require('../../assets/main/user_network.png')}
+                                                style={{ width: 75, height: 75 }}></Image>
+                                            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+                                                เครือข่าย</Text>
+                                        </TouchableOpacity>
+
+
+                                    </Col>
+                                </Grid>
                             </Content>
                         }
                     </>
