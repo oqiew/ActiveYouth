@@ -305,7 +305,7 @@ export class AYScreen extends Component {
                                 Y_name, Y_description, Y_type, Y_family, Y_family_stay,
                                 Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
                                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
-                                Y_attitude, Y_family_activity, Ay_ID
+                                Y_attitude, Y_family_activity, Ay_ID, Income1, Income2, Income3, Income4
 
                             })
                             .then((result) => {
@@ -338,7 +338,7 @@ export class AYScreen extends Component {
                                 Y_name, Y_description, Y_type, Y_family, Y_family_stay,
                                 Y_role, Y_concept, Y_family_career, Y_family_sub_career, Y_family_status,
                                 Y_covid19, Y_alcohol, Y_cigarette, Y_alcohol_cigarette,
-                                Y_attitude, Y_family_activity, Ay_ID
+                                Y_attitude, Y_family_activity, Ay_ID, Income1, Income2, Income3, Income4
                             })
                             .then((result) => {
                                 Alert.alert('อัพเดตสำเร็จ');

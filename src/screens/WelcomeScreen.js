@@ -15,8 +15,8 @@ import { isEmptyValue, isEmptyValues } from '../components/Method';
 import { TableName } from '../database/TableName';
 import VersionCheck from 'react-native-version-check';
 import { getAppstoreAppMetadata } from 'react-native-appstore-version-checker'
-const apple_store = "";
-const google_store = "";
+const apple_store = "https://apps.apple.com/th/app/activeyouth/id1559240111?l=th";
+const google_store = "https://play.google.com/store/apps/details?id=com.activeyouth";
 
 export class WelcomeScreen extends Component {
     constructor(props) {
@@ -52,9 +52,9 @@ export class WelcomeScreen extends Component {
     }
     componentDidMount() {
         getAppstoreAppMetadata(Platform.OS === 'ios' ? '1559240111' : 'com.activeyouth')
-        then(metadata => {
-            this.checkVersion(metadata)
-        })
+            .then(metadata => {
+                this.checkVersion(metadata)
+            })
             .catch(err => {
                 console.log("error occurred", err);
             });
@@ -148,7 +148,7 @@ export class WelcomeScreen extends Component {
                             text: 'Update',
                             onPress: async () => {
                                 BackHandler.exitApp();
-                                Linking.openURL(updateNeeded.storeUrl)
+                                Linking.openURL(Platform.OS === 'ios' ? apple_store : google_store)
                             },
                         },
                         ],
@@ -219,7 +219,7 @@ export class WelcomeScreen extends Component {
                         </View>
                         <View style={{ marginTop: 30 }}>
                             <Text style={{ textAlign: 'center', fontSize: 12 }}>ผู้พัฒนา นายอดิศร ราชชิต {'\n'}
-                            Email : adison.ra.56@ubu.ac.th{'\n'}0809352590</Text>
+                                Email : adison.ra.56@ubu.ac.th{'\n'}0809352590</Text>
                         </View>
                     </View>
                 </Content>
